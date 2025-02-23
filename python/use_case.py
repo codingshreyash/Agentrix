@@ -26,7 +26,7 @@ def chat():
     return {'response': output}
 
 @metrics.track_agent_output
-def process_input(input_text):
+def kickoff_agent(input_text):
     # Simulate tool execution
     if 'flight' in input_text:
         flight_id = extract_flight_id(input_text)
@@ -37,11 +37,3 @@ def process_input(input_text):
         return f"Flight {flight_id} status: On time"
     
     return "I'm sorry, I couldn't process your request."
-
-def extract_flight_id(input_text):
-    """Extract a flight ID from the input (dummy implementation)."""
-    words = input_text.split()
-    for word in words:
-        if word.isdigit():
-            return word
-    return "unknown"
