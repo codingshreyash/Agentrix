@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ChevronDown, Search, X } from 'lucide-react';
 import { Combobox } from './Combobox';
 
@@ -45,15 +45,39 @@ const getFilterTypeFromGroup = (group: string | undefined): 'user' | 'region' | 
 };
 
 export function DashboardFilters() {
-  const [selectedTime, setSelectedTime] = React.useState<FilterOption>(timeRanges[0]);
-  const [selectedDemographics, setSelectedDemographics] = React.useState<FilterOption[]>([]);
-  const [customDateRange, setCustomDateRange] = React.useState({ start: '', end: '' });
+  const [selectedTime, setSelectedTime] = useState<FilterOption>(timeRanges[0]);
+  const [selectedFilters, setSelectedFilters] = useState<FilterChip[]>([]);
+  const [isUserTypeOpen, setIsUserTypeOpen] = useState(false);
+  const [isRegionOpen, setIsRegionOpen] = useState(false);
+  const [isTimeOpen, setIsTimeOpen] = useState(false);
 
-  // Example selected filters
-  const selectedFilters: FilterChip[] = [
-    { id: '1', label: 'New Users', type: 'user' },
-    { id: '2', label: 'North America', type: 'region' }
-  ];
+  const handleUserTypeSelect = (userType: string) => {
+    setSelectedFilters(prev => {
+      const exists = prev.some(filter => filter.label === userType && filter.type === 'user');
+      if (exists) {
+        return prev.filter(filter => !(filter.label === userType && filter.type === 'user'));
+      }
+      return [...prev, { id: Date.now().toString(), label: userType, type: 'user' }];
+    });
+  };
+
+  const handleRegionSelect = (region: string) => {
+    setSelectedFilters(prev => {
+      const exists = prev.some(filter => filter.label === region && filter.type === 'region');
+      if (exists) {
+        return prev.filter(filter => !(filter.label === region && filter.type === 'region'));
+      }
+      return [...prev, { id: Date.now().toString(), label: region, type: 'region' }];
+    });
+  };
+
+  const removeFilter = (id: string) => {
+    setSelectedFilters(prev => prev.filter(filter => filter.id !== id));
+  };
+
+  const isSelected = (label: string, type: 'user' | 'region') => {
+    return selectedFilters.some(filter => filter.label === label && filter.type === type);
+  };
 
   const getFilterColors = (type: string) => {
     switch (type) {
@@ -71,80 +95,140 @@ export function DashboardFilters() {
   };
 
   return (
-    <div className="bg-white border-b border-gray-200">
-      <div className="container mx-auto px-4 py-4">
-        <div className="flex flex-wrap items-center gap-4">
-          {/* Time Range Dropdown */}
+    <div className="px-6 py-2 border-b border-gray-200">
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center gap-4">
+          {/* Time Range Section */}
           <div className="relative">
-            <Combobox
-              value={selectedTime}
-              onChange={setSelectedTime}
-              options={timeRanges}
-              displayValue={(option) => option.label}
-              placeholder="Select time range"
-              className="min-w-[200px]"
-            />
+            <button 
+              className="flex items-center gap-2 px-4 py-2 text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50"
+              onClick={() => setIsTimeOpen(!isTimeOpen)}
+            >
+              <span>{selectedTime.label}</span>
+              <ChevronDown className="w-4 h-4" />
+            </button>
+            {isTimeOpen && (
+              <div className="absolute z-10 w-56 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg">
+                <div className="p-2">
+                  <div className="px-3 py-2 text-sm text-gray-500 font-medium">TIME RANGE</div>
+                  {timeRanges.map(timeRange => (
+                    <button 
+                      key={timeRange.id}
+                      className={`w-full px-3 py-2 text-left rounded flex items-center justify-between ${
+                        selectedTime.id === timeRange.id
+                          ? 'bg-purple-50 text-purple-600'
+                          : 'text-gray-700 hover:bg-purple-50 hover:text-purple-600'
+                      }`}
+                      onClick={() => {
+                        setSelectedTime(timeRange);
+                        setIsTimeOpen(false);
+                      }}
+                    >
+                      {timeRange.label}
+                      {selectedTime.id === timeRange.id && (
+                        <div className="w-2 h-2 rounded-full bg-purple-600" />
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
-          {/* Custom Date Range (shows only when custom is selected) */}
-          {selectedTime.id === 'custom' && (
-            <div className="flex items-center gap-2">
-              <input
-                type="date"
-                value={customDateRange.start}
-                onChange={(e) => setCustomDateRange(prev => ({ ...prev, start: e.target.value }))}
-                className="bg-white text-gray-900 px-3 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
-              <span className="text-gray-600">to</span>
-              <input
-                type="date"
-                value={customDateRange.end}
-                onChange={(e) => setCustomDateRange(prev => ({ ...prev, end: e.target.value }))}
-                className="bg-white text-gray-900 px-3 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
+          {/* Vertical Divider */}
+          <div className="h-8 w-px bg-gray-200 mx-2"></div>
+
+          {/* Demographics Section */}
+          <div className="flex items-center gap-2">
+            {/* User Type Dropdown */}
+            <div className="relative">
+              <button 
+                className="flex items-center gap-2 px-4 py-2 text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50"
+                onClick={() => setIsUserTypeOpen(!isUserTypeOpen)}
+              >
+                <span>User Type</span>
+                <ChevronDown className="w-4 h-4" />
+              </button>
+              {isUserTypeOpen && (
+                <div className="absolute z-10 w-56 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg">
+                  <div className="p-2">
+                    <div className="px-3 py-2 text-sm text-gray-500 font-medium">USER TYPE</div>
+                    {['New Users', 'Returning Users', 'Premium Users'].map(userType => (
+                      <button 
+                        key={userType}
+                        className={`w-full px-3 py-2 text-left rounded flex items-center justify-between ${
+                          isSelected(userType, 'user')
+                            ? 'bg-purple-50 text-purple-600'
+                            : 'text-gray-700 hover:bg-purple-50 hover:text-purple-600'
+                        }`}
+                        onClick={() => handleUserTypeSelect(userType)}
+                      >
+                        {userType}
+                        {isSelected(userType, 'user') && (
+                          <div className="w-2 h-2 rounded-full bg-purple-600" />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
-          )}
 
-          {/* Demographics Multi-select */}
-          <div className="relative w-[250px]">
-            <Combobox
-              value={selectedDemographics}
-              onChange={setSelectedDemographics}
-              options={demographics}
-              displayValue={(options) => 
-                options.length === 0 
-                  ? 'Select demographics' 
-                  : `${options.length} selected`
-              }
-              multiple
-              placeholder="Select demographics"
-              className="w-full"
-            />
-          </div>
-
-          {/* Selected Filters Display */}
-          <div className="flex flex-wrap items-center gap-2">
-            {selectedDemographics.map((demo) => {
-              const filterType = getFilterTypeFromGroup(demo.group);
-              const colorClasses = getFilterColors(filterType);
-              
-              return (
-                <span
-                  key={demo.id}
-                  className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-sm ${colorClasses}`}
-                >
-                  {demo.label}
-                  <button
-                    onClick={() => setSelectedDemographics(prev => prev.filter(d => d.id !== demo.id))}
-                    className="hover:opacity-75"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                </span>
-              );
-            })}
+            {/* Region Dropdown */}
+            <div className="relative">
+              <button 
+                className="flex items-center gap-2 px-4 py-2 text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50"
+                onClick={() => setIsRegionOpen(!isRegionOpen)}
+              >
+                <span>Region</span>
+                <ChevronDown className="w-4 h-4" />
+              </button>
+              {isRegionOpen && (
+                <div className="absolute z-10 w-56 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg">
+                  <div className="p-2">
+                    <div className="px-3 py-2 text-sm text-gray-500 font-medium">REGION</div>
+                    {['North America', 'Europe', 'Asia', 'Other'].map(region => (
+                      <button 
+                        key={region}
+                        className={`w-full px-3 py-2 text-left rounded flex items-center justify-between ${
+                          isSelected(region, 'region')
+                            ? 'bg-purple-50 text-purple-600'
+                            : 'text-gray-700 hover:bg-purple-50 hover:text-purple-600'
+                        }`}
+                        onClick={() => handleRegionSelect(region)}
+                      >
+                        {region}
+                        {isSelected(region, 'region') && (
+                          <div className="w-2 h-2 rounded-full bg-purple-600" />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
+
+        {/* Selected Filters */}
+        {selectedFilters.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {selectedFilters.map(filter => (
+              <div
+                key={filter.id}
+                className={`${getFilterColors(filter.type)} px-3 py-1 rounded-full text-sm flex items-center gap-2`}
+              >
+                {filter.label}
+                <button
+                  onClick={() => removeFilter(filter.id)}
+                  className="hover:bg-white/20 rounded-full p-0.5"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -11,138 +11,33 @@ import {
 import {
   TrendingUp, Clock, DollarSign, Users, ArrowUpRight,
   ArrowDownRight, Activity, Filter, AlertTriangle,
-  Heart, MessageSquare, AlertCircle
+  Heart, MessageSquare, AlertCircle, Sun
 } from 'lucide-react';
+import { mockData, intentCategories } from '../data/mockData';
 
-interface LegendEntry {
-  dataKey: keyof typeof visibleLines;
-  value: string;
-}
+// Update the CustomTooltip component at the top of the file
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (!active || !payload || !payload.length) return null;
 
-const mockData = {
-  kpis: [
-    {
-      title: 'Daily Active Users',
-      value: '1.35M',
-      change: '+12.5%',
-      positive: true,
-      icon: TrendingUp,
-      color: 'purple'
-    },
-    {
-      title: 'Avg Session Duration',
-      value: '4m 32s',
-      change: '-8.3%',
-      positive: false,
-      icon: Clock,
-      color: 'emerald'
-    },
-    {
-      title: 'Revenue Impact',
-      value: '$12,450',
-      change: '+15.2%',
-      positive: true,
-      icon: DollarSign,
-      color: 'orange'
-    },
-    {
-      title: 'Human Escalation Rate',
-      value: '4.8%',
-      change: '-2.1%',
-      positive: true,
-      icon: Users,
-      color: 'blue'
-    }
-  ],
-  intentDistribution: [
-    { intent: 'Book Flights', users: 800000, color: '#9333EA' },
-    { intent: 'Schedule Waymo', users: 543000, color: '#F97316' },
-    { intent: 'Call Uber', users: 104000, color: '#3B82F6' },
-    { intent: 'Boom SuperSonic Flights', users: 23000, color: '#10B981' }
-  ],
-  sentimentData: [
-    { time: '00:00', positive: 65, neutral: 25, negative: 10 },
-    { time: '04:00', positive: 70, neutral: 20, negative: 10 },
-    { time: '08:00', positive: 60, neutral: 30, negative: 10 },
-    { time: '12:00', positive: 55, neutral: 30, negative: 15 },
-    { time: '16:00', positive: 75, neutral: 15, negative: 10 },
-    { time: '20:00', positive: 70, neutral: 20, negative: 10 }
-  ],
-  userBehavior: {
-    retention: [
-      { day: 1, users: 100 },
-      { day: 7, users: 75 },
-      { day: 14, users: 60 },
-      { day: 30, users: 45 },
-      { day: 60, users: 30 },
-      { day: 90, users: 25 }
-    ],
-    sessionDuration: [
-      { duration: '0-1m', users: 1200 },
-      { duration: '1-3m', users: 2500 },
-      { duration: '3-5m', users: 3100 },
-      { duration: '5-10m', users: 2300 },
-      { duration: '10m+', users: 1400 }
-    ]
-  },
-  revenueData: {
-    byIntent: [
-      { intent: 'Book Flights', actual: 25000, potential: 35000 },
-      { intent: 'Schedule Waymo', actual: 12000, potential: 28000 },
-      { intent: 'Hotel Booking', actual: 18000, potential: 22000 },
-      { intent: 'Car Rental', actual: 8000, potential: 15000 }
-    ],
-    trending: [
-      { month: 'Jan', revenue: 42000 },
-      { month: 'Feb', revenue: 48000 },
-      { month: 'Mar', revenue: 55000 },
-      { month: 'Apr', revenue: 62000 },
-      { month: 'May', revenue: 70000 },
-      { month: 'Jun', revenue: 82000 }
-    ]
-  },
-  trendingKeywords: [
-    { text: 'Book Flights', value: 100, intent: 'travel', trend: 'up', color: '#9333EA' },
-    { text: 'Hotel Bundle', value: 85, intent: 'travel', trend: 'up', color: '#F97316' },
-    { text: 'Car Rental', value: 70, intent: 'travel', trend: 'stable', color: '#3B82F6' },
-    { text: 'Restaurant', value: 65, intent: 'local', trend: 'up', color: '#10B981' },
-    { text: 'Airport Transfer', value: 60, intent: 'travel', trend: 'down', color: '#EF4444' },
-    { text: 'Flight Change', value: 55, intent: 'support', trend: 'up', color: '#8B5CF6' },
-    { text: 'Baggage Policy', value: 50, intent: 'support', trend: 'stable', color: '#EC4899' },
-    { text: 'Loyalty Points', value: 45, intent: 'rewards', trend: 'up', color: '#F59E0B' }
-  ],
-  satisfaction: {
-    sentimentOverTime: [
-      { date: '2024-01', positive: 75, neutral: 15, negative: 10 },
-      { date: '2024-02', positive: 70, neutral: 20, negative: 10 },
-      { date: '2024-03', positive: 65, neutral: 20, negative: 15 },
-      { date: '2024-04', positive: 80, neutral: 15, negative: 5 },
-      { date: '2024-05', positive: 85, neutral: 10, negative: 5 },
-      { date: '2024-06', positive: 78, neutral: 12, negative: 10 }
-    ],
-    frustrationPoints: [
-      { issue: 'Complex Booking Flow', count: 450, severity: 'high' },
-      { issue: 'Payment Failures', count: 320, severity: 'high' },
-      { issue: 'Unclear Pricing', count: 280, severity: 'medium' },
-      { issue: 'Slow Response Time', count: 250, severity: 'medium' },
-      { issue: 'Missing Features', count: 180, severity: 'low' }
-    ],
-    escalationsByIntent: [
-      { intent: 'Flight Changes', rate: 25, total: 1200 },
-      { intent: 'Refund Requests', rate: 35, total: 800 },
-      { intent: 'Loyalty Points', rate: 15, total: 2000 },
-      { intent: 'Booking Issues', rate: 30, total: 1500 },
-      { intent: 'Price Match', rate: 20, total: 600 }
-    ]
-  },
-  intentDistributionOverTime: [
-    { date: '2024-01', 'Book Flights': 800000, 'Schedule Waymo': 543000, 'Call Uber': 104000, 'Boom SuperSonic Flights': 23000 },
-    { date: '2024-02', 'Book Flights': 820000, 'Schedule Waymo': 553000, 'Call Uber': 114000, 'Boom SuperSonic Flights': 25000 },
-    { date: '2024-03', 'Book Flights': 790000, 'Schedule Waymo': 563000, 'Call Uber': 124000, 'Boom SuperSonic Flights': 28000 },
-    { date: '2024-04', 'Book Flights': 850000, 'Schedule Waymo': 573000, 'Call Uber': 134000, 'Boom SuperSonic Flights': 30000 },
-    { date: '2024-05', 'Book Flights': 880000, 'Schedule Waymo': 583000, 'Call Uber': 144000, 'Boom SuperSonic Flights': 32000 },
-    { date: '2024-06', 'Book Flights': 900000, 'Schedule Waymo': 593000, 'Call Uber': 154000, 'Boom SuperSonic Flights': 35000 },
-  ],
+  return (
+    <div className="bg-white p-3 shadow-lg border border-gray-200 rounded-lg">
+      <p className="text-sm font-medium text-gray-900 mb-2">{label}</p>
+      {payload.map((entry: any, index: number) => (
+        <div key={index} className="flex items-center justify-between gap-4 mb-1 last:mb-0">
+          <div className="flex items-center gap-2">
+            <div 
+              className="w-3 h-3 rounded-full" 
+              style={{ backgroundColor: entry.stroke || entry.color }}
+            />
+            <span className="text-sm text-gray-500">{entry.name}</span>
+          </div>
+          <span className="text-sm font-semibold text-gray-900">
+            {entry.value.toLocaleString()}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
 };
 
 export function Analytics() {
@@ -151,11 +46,14 @@ export function Analytics() {
     'Book Flights': true,
     'Schedule Waymo': true,
     'Call Uber': true,
-    'Boom SuperSonic Flights': true
+    'Boom SuperSonic Flights': true,
+    'Cruise Bookings': true,
+    'Rental Cars': true
   });
   const [hoveredKeyword, setHoveredKeyword] = useState(null);
   // New state for per-line hover
   const [hoveredLine, setHoveredLine] = useState<string | null>(null);
+  const [addedToRoadmap, setAddedToRoadmap] = useState<Record<string, boolean>>({});
 
   // Update the renderCustomDot function to use name instead of dataKey
   const renderCustomDot = (name: string) => (props: any) => {
@@ -257,20 +155,39 @@ export function Analytics() {
             {/* Sentiment Over Time */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
               <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Sentiment Trends</h3>
+                <h2 className="text-lg font-semibold text-gray-900 mb-2">Sentiment Trends</h2>
+                <p className="text-sm text-gray-500 mb-6">Track changes in user sentiment over time to identify patterns and areas for improvement</p>
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={mockData.satisfaction.sentimentOverTime}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                       <XAxis dataKey="date" stroke="#9CA3AF" />
                       <YAxis stroke="#9CA3AF" />
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: '#FFFFFF', // changed from '#1F2937'
-                          border: '1px solid #D1D5DB', // added light gray border
-                          borderRadius: '0.5rem',
-                          color: '#000000', // changed from '#F3F4F6'
+                      <Tooltip 
+                        content={({ active, payload, label }) => {
+                          if (!active || !payload || !payload.length) return null;
+                          
+                          return (
+                            <div className="bg-white p-3 shadow-lg border border-gray-200 rounded-lg">
+                              <p className="text-sm font-medium text-gray-900 mb-2">{label}</p>
+                              {payload.map((entry: any, index: number) => (
+                                <div key={index} className="flex items-center justify-between gap-4 mb-1 last:mb-0">
+                                  <div className="flex items-center gap-2">
+                                    <div 
+                                      className="w-3 h-3 rounded-full" 
+                                      style={{ backgroundColor: entry.stroke || entry.color }}
+                                    />
+                                    <span className="text-sm text-gray-500">{entry.name}</span>
+                                  </div>
+                                  <span className="text-sm font-semibold text-gray-900">
+                                    {entry.value.toLocaleString()}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          );
                         }}
+                        cursor={{ stroke: '#9CA3AF', strokeWidth: 1, strokeDasharray: '4 4' }}
                       />
                       <Area
                         type="monotone"
@@ -278,6 +195,7 @@ export function Analytics() {
                         stackId="1"
                         stroke="#10B981"
                         fill="#10B981"
+                        name="Positive"
                       />
                       <Area
                         type="monotone"
@@ -285,6 +203,7 @@ export function Analytics() {
                         stackId="1"
                         stroke="#F59E0B"
                         fill="#F59E0B"
+                        name="Neutral"
                       />
                       <Area
                         type="monotone"
@@ -292,6 +211,7 @@ export function Analytics() {
                         stackId="1"
                         stroke="#EF4444"
                         fill="#EF4444"
+                        name="Negative"
                       />
                     </AreaChart>
                   </ResponsiveContainer>
@@ -300,7 +220,8 @@ export function Analytics() {
 
               {/* Escalation Rates */}
               <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Escalation Rates by Intent</h3>
+                <h2 className="text-lg font-semibold text-gray-900 mb-2">Escalation Rates by Intent</h2>
+                <p className="text-sm text-gray-500 mb-6">Monitor which intents lead to human escalation to identify areas needing optimization</p>
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart
@@ -413,7 +334,8 @@ export function Analytics() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
               {/* Session Duration Distribution */}
               <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Session Duration</h3>
+                <h2 className="text-lg font-semibold text-gray-900 mb-2">Session Duration</h2>
+                <p className="text-sm text-gray-500 mb-6">Analyze how long users spend interacting with the system in different time intervals</p>
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={mockData.userBehavior.sessionDuration}>
@@ -440,7 +362,8 @@ export function Analytics() {
 
               {/* User Retention */}
               <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">User Retention</h3>
+                <h2 className="text-lg font-semibold text-gray-900 mb-2">User Retention</h2>
+                <p className="text-sm text-gray-500 mb-6">Track how many users continue to engage with the system over different time periods</p>
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={mockData.userBehavior.retention}>
@@ -477,7 +400,8 @@ export function Analytics() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
               {/* Revenue by Intent */}
               <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Revenue by Intent</h3>
+                <h2 className="text-lg font-semibold text-gray-900 mb-2">Revenue by Intent</h2>
+                <p className="text-sm text-gray-500 mb-6">Compare actual vs potential revenue generation across different user intents</p>
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={mockData.revenueData.byIntent}>
@@ -511,7 +435,8 @@ export function Analytics() {
 
               {/* Revenue Trend */}
               <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Revenue Trend</h3>
+                <h2 className="text-lg font-semibold text-gray-900 mb-2">Revenue Trend</h2>
+                <p className="text-sm text-gray-500 mb-6">Monitor revenue growth and patterns over time to identify business opportunities</p>
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={mockData.revenueData.trending}>
@@ -548,68 +473,68 @@ export function Analytics() {
             <div className="mb-8">
               {/* Intent Activity - now takes full width */}
               <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-900 mb-6">Activity</h2>
+                <h2 className="text-lg font-semibold text-gray-900 mb-2">Activity</h2>
+                <p className="text-sm text-gray-500 mb-6">Track the volume and distribution of different user intents across time periods</p>
                 <div className="flex">
                   <div className="flex-1 h-96">
                     <ResponsiveContainer width="100%" height="100%">
-                        <LineChart 
+                      <LineChart 
                         data={mockData.intentDistributionOverTime}
                         margin={{ left: 60, right: 30, top: 30, bottom: 30 }}
-                        >
+                      >
                         <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                         <XAxis 
                           dataKey="date" 
                           stroke="#9CA3AF"
                           label={{ 
-                          value: 'Date', 
-                          position: 'bottom',
-                          offset: 10,
-                          style: { fill: '#9CA3AF' }
+                            value: 'Date', 
+                            position: 'bottom',
+                            offset: 10,
+                            style: { fill: '#9CA3AF' }
                           }}
                         />
                         <YAxis 
                           stroke="#9CA3AF"
                           label={{ 
-                          value: 'Number of Users', 
-                          angle: -90, 
-                          position: 'left',
-                          offset: 20,
-                          style: { fill: '#9CA3AF' },
-                          dy: -20
+                            value: 'Number of Users', 
+                            angle: -90, 
+                            position: 'left',
+                            offset: 20,
+                            style: { fill: '#9CA3AF' },
+                            dy: -20
                           }}
                           tickFormatter={formatYAxis}
                         />
-                        <Tooltip
-                          contentStyle={{
-                          backgroundColor: '#FFFFFF',
-                          border: '1px solid #D1D5DB',
-                          borderRadius: '0.5rem',
-                          color: '#000000',
-                          }}
-                          formatter={(value: number, name: string) => [
-                          `${value.toLocaleString()} users`,
-                          name
-                          ]}
-                          itemSorter={(item) => (item.name === hoveredLine ? 1 : -1)}
+                        <Tooltip 
+                          content={<CustomTooltip />}
+                          cursor={{ stroke: '#9CA3AF', strokeWidth: 1, strokeDasharray: '4 4' }}
                         />
                         <Legend
                           layout="vertical"
                           verticalAlign="middle"
                           align="right"
                           wrapperStyle={{
-                          paddingLeft: '32px',
+                            paddingLeft: '32px',
                           }}
                           onClick={handleLegendClick}
                           formatter={(value: string) => {
-                          const active = visibleLines[value];
-                          return (
-                            <span style={{ 
-                            color: active ? '#1F2937' : '#9CA3AF',
-                            cursor: 'pointer'
-                            }}>
-                            {value}
-                            </span>
-                          );
+                            const active = visibleLines[value];
+                            return (
+                              <span className="flex items-center gap-2" style={{ 
+                                color: active ? '#1F2937' : '#9CA3AF',
+                                cursor: 'pointer'
+                              }}>
+                                {value}
+                                {intentCategories[value] === 'unsupported' && (
+                                  <div className="relative group">
+                                    <AlertTriangle className="w-4 h-4 text-red-500 cursor-help" />
+                                    <div className="absolute z-10 invisible group-hover:visible bg-gray-900 text-white text-sm rounded-lg py-1 px-2 -right-4 -top-8 whitespace-nowrap">
+                                      Your agent does not support this feature
+                                    </div>
+                                  </div>
+                                )}
+                              </span>
+                            );
                           }}
                         />
                         <Line
@@ -652,7 +577,27 @@ export function Analytics() {
                           hide={!visibleLines['Boom SuperSonic Flights']}
                           connectNulls={true}
                         />
-                        </LineChart>
+                        <Line
+                          type="monotoneX"
+                          dataKey="Cruise Bookings"
+                          name="Cruise Bookings"
+                          stroke="#EF4444"
+                          strokeWidth={2}
+                          dot={renderCustomDot('Cruise Bookings')}
+                          hide={!visibleLines['Cruise Bookings']}
+                          connectNulls={true}
+                        />
+                        <Line
+                          type="monotoneX"
+                          dataKey="Rental Cars"
+                          name="Rental Cars"
+                          stroke="#6366F1"
+                          strokeWidth={2}
+                          dot={renderCustomDot('Rental Cars')}
+                          hide={!visibleLines['Rental Cars']}
+                          connectNulls={true}
+                        />
+                      </LineChart>
                     </ResponsiveContainer>
                   </div>
                 </div>
@@ -661,44 +606,62 @@ export function Analytics() {
 
             {/* Intent Trends */}
             <div className="mb-8">
-              <IntentTrends showGrowth={true} />
+              <IntentTrends data={mockData.intentDistributionOverTime} />
             </div>
 
-            {/* Missed Opportunities */}
+            {/* Opportunities */}
             <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-              <div className="flex items-center gap-2 mb-6">
+              <div className="flex items-center gap-2 mb-2">
                 <AlertTriangle className="w-5 h-5 text-orange-500" />
-                <h3 className="text-lg font-semibold text-gray-900">Missed Opportunities</h3>
+                <h3 className="text-lg font-semibold text-gray-900">Opportunities</h3>
               </div>
+              <p className="text-sm text-gray-500 mb-6">Identify potential revenue and engagement opportunities that weren't fully captured, helping prioritize improvements</p>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[
                   {
-                    intent: 'Hotel Bundle Booking',
-                    count: 1250,
-                    impact: '$25,000',
+                    intent: 'Schedule Waymo',
+                    count: 450000,
+                    impact: '$125,000',
                     color: 'orange'
                   },
                   {
-                    intent: 'Car Rental',
-                    count: 850,
-                    impact: '$12,000',
-                    color: 'blue'
+                    intent: 'Boom SuperSonic Flights',
+                    count: 115000,
+                    impact: '$85,000',
+                    color: 'emerald'
                   },
                   {
-                    intent: 'Restaurant Reservation',
-                    count: 620,
-                    impact: '$8,000',
-                    color: 'emerald'
+                    intent: 'Book Flights',
+                    count: 850000,
+                    impact: '$45,000',
+                    color: 'purple'
                   }
                 ].map((item, index) => (
                   <div
                     key={index}
-                    className="bg-gray-100 rounded-lg p-6 border border-gray-200"
+                    className="bg-gray-100 rounded-lg p-6 border border-gray-200 relative"
                   >
-                    <h4 className="text-gray-900 font-medium mb-3">{item.intent}</h4>
+                    <div className="absolute top-3 right-3">
+                      <button 
+                        className={`px-2 py-1 text-xs font-medium rounded-md transition-colors shadow-sm ${
+                          addedToRoadmap[item.intent]
+                            ? 'bg-red-600 text-white hover:bg-red-700'
+                            : 'bg-green-600 text-white hover:bg-green-700'
+                        }`}
+                        onClick={() => {
+                          setAddedToRoadmap(prev => ({
+                            ...prev,
+                            [item.intent]: !prev[item.intent]
+                          }));
+                        }}
+                      >
+                        {addedToRoadmap[item.intent] ? 'Remove from Roadmap' : 'Add to Roadmap'}
+                      </button>
+                    </div>
+                    <h4 className="text-gray-900 font-medium mb-3 pr-24">{item.intent}</h4>
                     <div className="flex justify-between text-sm mb-2">
                       <span className="text-gray-600">Requests</span>
-                      <span className={`text-${item.color}-400`}>{item.count}</span>
+                      <span className={`text-${item.color}-400`}>{item.count.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Potential Revenue</span>
@@ -736,7 +699,8 @@ export function Analytics() {
             {/* Intent Activity & Sentiment Analysis */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
               <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-900 mb-6">Intent Counts</h2>
+                <h2 className="text-lg font-semibold text-gray-900 mb-2">Intent Counts</h2>
+                <p className="text-sm text-gray-500 mb-6">Track the daily volume of user intents over time to identify usage patterns and trends</p>
                 <div className="h-96">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart 
@@ -773,9 +737,9 @@ export function Analytics() {
                           borderRadius: '0.5rem',
                           color: '#000000',
                         }}
-                        formatter={(value: number, name: string) => [
-                          `${value.toLocaleString()} users`,
-                          name
+                        formatter={(value: number) => [
+                          value.toLocaleString(),
+                          null
                         ]}
                         itemSorter={(item) => (item.name === hoveredLine ? 1 : -1)}
                       />
@@ -834,7 +798,8 @@ export function Analytics() {
               </div>
 
               <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-900 mb-6">Sentiment Analysis</h2>
+                <h2 className="text-lg font-semibold text-gray-900 mb-2">Sentiment Analysis</h2>
+                <p className="text-sm text-gray-500 mb-6">Monitor user sentiment distribution across positive, neutral, and negative interactions</p>
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={mockData.sentimentData}>
@@ -890,7 +855,12 @@ export function Analytics() {
           <div className="flex items-center justify-between px-6 py-4">
             <div className="flex items-center gap-4">
               <h1 className="text-xl font-semibold text-gray-900">Analytics Dashboard</h1>
-              <ThemeToggle />
+              <button 
+                className="p-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
+                aria-label="Toggle theme"
+              >
+                <Sun className="w-4 h-4" />
+              </button>
             </div>
             <div className="flex items-center gap-4">
               <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-purple-100 text-purple-600 hover:bg-purple-200 transition-colors">
