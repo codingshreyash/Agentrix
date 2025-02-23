@@ -57,6 +57,11 @@ class AnalyticsStore {
           "Book me a flight to New York",
           "I need a taxi in 30 minutes",
           "Can you recommend a hotel?",
+          "Help me debug this code",
+          "Create an architecture diagram",
+          "Book a conference room",
+          "Schedule a meeting",
+          "Generate API documentation"
         ];
         const randomMessage = mockMessages[Math.floor(Math.random() * mockMessages.length)];
         
@@ -160,6 +165,10 @@ class AnalyticsStore {
       this.state = {
         ...this.state,
         totalAIResponses: this.state.totalAIResponses + 1,
+        messagesByHour: {
+          ...this.state.messagesByHour,
+          [hourKey]: (this.state.messagesByHour[hourKey] || 0) + 1,
+        },
       };
     }
 
