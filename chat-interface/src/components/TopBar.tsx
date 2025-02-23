@@ -1,16 +1,22 @@
 import Image from 'next/image';
 
-export const TopBar = () => {
+interface TopBarProps {
+  onLogoClick: () => void;
+}
+
+export const TopBar = ({ onLogoClick }: TopBarProps) => {
   return (
     <div className="w-full px-4 py-3 flex justify-between items-center bg-white">
-      {/* Logo */}
-      <Image
-        src="/expedia_logo.png"
-        alt="Expedia Logo"
-        width={120}
-        height={40}
-        className="object-contain"
-      />
+      {/* Logo wrapped in a clickable button */}
+      <button onClick={onLogoClick}>
+        <Image
+          src="/expedia_logo.png"
+          alt="Expedia Logo"
+          width={120}
+          height={40}
+          className="object-contain"
+        />
+      </button>
 
       {/* Right side: Profile and Settings */}
       <div className="flex items-center gap-4">

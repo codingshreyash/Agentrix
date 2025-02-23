@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react';
 import { WelcomeInterface } from '@/components/WelcomeInterface';
 import { ChatInterface } from '@/components/ChatInterface';
+import { TopBar } from '@/components/TopBar';
 
 interface Message {
   text: string;
@@ -59,15 +60,22 @@ export default function Home() {
     );
   }, []);
 
+  // New callback to navigate back to welcome screen
+  const handleLogoClick = () => {
+    setHasStartedChat(false);
+    setMessages([]);
+    setBotIndex(0);
+  };
+
   const actionButtons = [
     { icon: '🛩', label: 'Book Flights', onClick: () => console.log('DeepSearch clicked') },
     { icon: '🏨', label: 'Book Hotels', onClick: () => console.log('Think clicked') },
   ];
 
   return (
-    <div className="min-h-screen">
+    <div className="h-screen flex flex-col overflow-hidden">
       {!hasStartedChat ? (
-        <div className="p-8 flex items-center justify-center min-h-screen">
+        <div className="p-8 flex items-center justify-center h-full">
           <WelcomeInterface
             userName="Perbhat Kumar"
             onSendMessage={handleSubmit}
@@ -75,11 +83,16 @@ export default function Home() {
           />
         </div>
       ) : (
-        <ChatInterface
-          messages={messages}
-          onSendMessage={handleSubmit}
-          onStreamComplete={handleStreamComplete}
-        />
+        <>
+          <TopBar onLogoClick={handleLogoClick} />
+          <div className="flex-1 overflow-auto">
+            <ChatInterface
+              messages={messages}
+              onSendMessage={handleSubmit}
+              onStreamComplete={handleStreamComplete}
+            />
+          </div>
+        </>
       )}
     </div>
   );

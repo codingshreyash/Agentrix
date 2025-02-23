@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { ChatMessage } from './ChatMessage';
 import { ChatInput } from './ChatInput';
 import { MessageActions } from './MessageActions';
@@ -17,16 +17,23 @@ interface ChatInterfaceProps {
 }
 
 export const ChatInterface = ({ messages, onSendMessage, onStreamComplete }: ChatInterfaceProps) => {
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, [messages]);
+
   const handleStreamingCompleteForIndex = useCallback((index: number) => {
     onStreamComplete(index);
   }, [onStreamComplete]);
 
   return (
-    <div className="flex flex-col h-screen">
-      <TopBar />
+    <div className="flex flex-col h-full">
+      {/* <TopBar /> */}
 
       {/* Messages area with scrolling */}
-      <div className="flex-1 overflow-y-auto py-6">
+      <div ref={messagesContainerRef} className="flex-1 overflow-auto p-4">
         <div className="max-w-3xl mx-auto px-8 space-y-8">
           {messages.map((message, index) => (
             <ChatMessage 
@@ -46,11 +53,12 @@ export const ChatInterface = ({ messages, onSendMessage, onStreamComplete }: Cha
               ) : undefined}
             />
           ))}
+          <div ref={bottomRef} /> {/* dummy element to scroll into view */}
         </div>
       </div>
 
       {/* Input area fixed at bottom */}
-      <div className="border-t border-gray-100 p-6 bg-white">
+      <div className="p-4">
         <div className="max-w-3xl mx-auto">
           <ChatInput onSubmit={onSendMessage} />
         </div>
