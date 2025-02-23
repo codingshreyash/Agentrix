@@ -31,7 +31,7 @@ export function DashboardFilters() {
   const [customDateRange, setCustomDateRange] = React.useState({ start: '', end: '' });
 
   return (
-    <div className="bg-gray-800/50 border-b border-gray-700">
+    <div className="bg-white dark:bg-white border-b border-gray-200">
       <div className="container mx-auto px-4 py-4">
         <div className="flex flex-wrap items-center gap-4">
           {/* Time Range Dropdown */}
@@ -53,14 +53,14 @@ export function DashboardFilters() {
                 type="date"
                 value={customDateRange.start}
                 onChange={(e) => setCustomDateRange(prev => ({ ...prev, start: e.target.value }))}
-                className="bg-gray-700 text-gray-200 px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="bg-white text-gray-900 px-3 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
-              <span className="text-gray-400">to</span>
+              <span className="text-gray-600">to</span>
               <input
                 type="date"
                 value={customDateRange.end}
                 onChange={(e) => setCustomDateRange(prev => ({ ...prev, end: e.target.value }))}
-                className="bg-gray-700 text-gray-200 px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="bg-white text-gray-900 px-3 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
             </div>
           )}
@@ -87,12 +87,12 @@ export function DashboardFilters() {
             {selectedDemographics.map((demo) => (
               <span
                 key={demo.id}
-                className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-purple-500/20 text-purple-400 text-sm"
+                className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-purple-100 text-purple-600 text-sm"
               >
                 {demo.label}
                 <button
                   onClick={() => setSelectedDemographics(prev => prev.filter(d => d.id !== demo.id))}
-                  className="hover:text-purple-300"
+                  className="hover:text-purple-700"
                 >
                   <X className="w-3 h-3" />
                 </button>

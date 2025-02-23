@@ -1,5 +1,5 @@
 import React from 'react';
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell } from 'recharts';
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell, CartesianGrid } from 'recharts';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 
 interface TrendData {
@@ -24,22 +24,23 @@ interface IntentTrendsProps {
 
 export function IntentTrends({ showGrowth = true }: IntentTrendsProps) {
   const [metric, setMetric] = React.useState<'growth' | 'volume'>('growth');
+  const [hoveredBar, setHoveredBar] = React.useState<number | null>(null);
   
   const sortedData = [...mockTrendData].sort((a, b) => 
     metric === 'growth' ? b.growth - a.growth : b.volume - a.volume
   );
 
   return (
-    <div className="bg-gray-800 rounded-lg p-6">
+    <div className="rounded-xl p-6 bg-white border border-gray-300">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-lg font-semibold text-white">Intent Trends</h2>
+        <h2 className="text-lg font-semibold text-gray-900">Intent Trends</h2>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setMetric('growth')}
             className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors
               ${metric === 'growth'
                 ? 'bg-purple-500 text-white'
-                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
               }`}
           >
             Growth Rate
@@ -49,7 +50,7 @@ export function IntentTrends({ showGrowth = true }: IntentTrendsProps) {
             className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors
               ${metric === 'volume'
                 ? 'bg-purple-500 text-white'
-                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
               }`}
           >
             Volume
@@ -64,7 +65,7 @@ export function IntentTrends({ showGrowth = true }: IntentTrendsProps) {
             layout="vertical"
             margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
           >
-            <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+            <CartesianGrid strokeDasharray="3 3" stroke="#ccc" />
             <XAxis
               type="number"
               stroke="#9CA3AF"
@@ -77,12 +78,8 @@ export function IntentTrends({ showGrowth = true }: IntentTrendsProps) {
               width={120}
             />
             <Tooltip
-              contentStyle={{
-                backgroundColor: '#1F2937',
-                border: 'none',
-                borderRadius: '0.5rem',
-                color: '#F3F4F6',
-              }}
+              cursor={{ fill: 'transparent' }} // prevents white hover background
+              contentStyle={{ backgroundColor: '#ffffff', color: '#000000', border: 'none' }} // white background with dark text
               formatter={(value: number) => [
                 metric === 'growth' ? `${value}%` : value.toLocaleString(),
                 metric === 'growth' ? 'Growth Rate' : 'Volume'
@@ -91,6 +88,7 @@ export function IntentTrends({ showGrowth = true }: IntentTrendsProps) {
             <Bar
               dataKey={metric}
               radius={[0, 4, 4, 0]}
+              activeBar={false} // Disable bar highlighting
             >
               {sortedData.map((entry, index) => (
                 <Cell
@@ -99,6 +97,13 @@ export function IntentTrends({ showGrowth = true }: IntentTrendsProps) {
                     ? entry.growth > 0 ? '#10B981' : '#EF4444'
                     : '#6366F1'
                   }
+                  onMouseEnter={() => setHoveredBar(index)}
+                  onMouseLeave={() => setHoveredBar(null)}
+                  style={{
+                    transition: 'transform 0.2s',
+                    transform: hoveredBar === index ? 'scale(1.05)' : 'scale(1)',
+                    transformOrigin: 'center'
+                  }}
                 />
               ))}
             </Bar>
@@ -108,7 +113,7 @@ export function IntentTrends({ showGrowth = true }: IntentTrendsProps) {
 
       {/* Trend Indicators */}
       <div className="grid grid-cols-2 gap-4 mt-6">
-        <div className="bg-emerald-500/10 rounded-lg p-4">
+        <div className="rounded-xl p-4 border border-gray-200">
           <div className="flex items-center gap-2 text-emerald-400 mb-2">
             <TrendingUp className="w-5 h-5" />
             <span className="font-medium">Fastest Growing</span>
@@ -116,14 +121,14 @@ export function IntentTrends({ showGrowth = true }: IntentTrendsProps) {
           <div className="space-y-2">
             {sortedData.slice(0, 3).map(item => (
               <div key={item.intent} className="flex justify-between items-center">
-                <span className="text-gray-300">{item.intent}</span>
+                <span className="text-gray-900">{item.intent}</span>
                 <span className="text-emerald-400">+{item.growth}%</span>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="bg-red-500/10 rounded-lg p-4">
+        <div className="rounded-xl p-4 border border-gray-200">
           <div className="flex items-center gap-2 text-red-400 mb-2">
             <TrendingDown className="w-5 h-5" />
             <span className="font-medium">Declining</span>
@@ -131,7 +136,7 @@ export function IntentTrends({ showGrowth = true }: IntentTrendsProps) {
           <div className="space-y-2">
             {sortedData.slice(-3).reverse().map(item => (
               <div key={item.intent} className="flex justify-between items-center">
-                <span className="text-gray-300">{item.intent}</span>
+                <span className="text-gray-900">{item.intent}</span>
                 <span className="text-red-400">{item.growth}%</span>
               </div>
             ))}

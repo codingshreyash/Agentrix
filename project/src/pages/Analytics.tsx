@@ -147,7 +147,7 @@ const mockData = {
 
 export function Analytics() {
   const [activeSection, setActiveSection] = useState('engagement');
-  const [visibleLines, setVisibleLines] = useState({
+  const [visibleLines, setVisibleLines] = useState<Record<string, boolean>>({
     'Flight Booking': true,
     'Taxi Booking': true,
     'Check Loyalty Points': true,
@@ -167,71 +167,71 @@ export function Analytics() {
       case 'satisfaction':
         return (
           <>
-            <h2 className="text-xl font-semibold text-white mb-6">User Satisfaction Analysis</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-6">User Satisfaction Analysis</h2>
             
             {/* Satisfaction KPIs */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              <div className="bg-gray-800 rounded-lg p-6">
+              <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
                 <div className="flex items-center justify-between mb-4">
-                  <div className="p-3 bg-green-500/10 rounded-lg">
-                    <Heart className="w-6 h-6 text-green-500" />
+                  <div className="p-3 bg-green-100 rounded-lg">
+                    <Heart className="w-6 h-6 text-green-600" />
                   </div>
-                  <span className="text-sm text-green-500 flex items-center">
+                  <span className="text-sm text-green-600 flex items-center">
                     <ArrowUpRight className="w-4 h-4 mr-1" />
                     +5.2%
                   </span>
                 </div>
-                <h3 className="text-gray-400 text-sm mb-2">Overall Satisfaction</h3>
-                <p className="text-2xl font-bold text-white">85%</p>
+                <h3 className="text-gray-600 text-sm mb-2">Overall Satisfaction</h3>
+                <p className="text-2xl font-bold text-gray-900">85%</p>
               </div>
 
-              <div className="bg-gray-800 rounded-lg p-6">
+              <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
                 <div className="flex items-center justify-between mb-4">
-                  <div className="p-3 bg-orange-500/10 rounded-lg">
-                    <MessageSquare className="w-6 h-6 text-orange-500" />
+                  <div className="p-3 bg-orange-100 rounded-lg">
+                    <MessageSquare className="w-6 h-6 text-orange-600" />
                   </div>
-                  <span className="text-sm text-red-500 flex items-center">
+                  <span className="text-sm text-red-600 flex items-center">
                     <ArrowUpRight className="w-4 h-4 mr-1" />
                     +2.1%
                   </span>
                 </div>
-                <h3 className="text-gray-400 text-sm mb-2">Escalation Rate</h3>
-                <p className="text-2xl font-bold text-white">12.5%</p>
+                <h3 className="text-gray-600 text-sm mb-2">Escalation Rate</h3>
+                <p className="text-2xl font-bold text-gray-900">12.5%</p>
               </div>
 
-              <div className="bg-gray-800 rounded-lg p-6">
+              <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
                 <div className="flex items-center justify-between mb-4">
-                  <div className="p-3 bg-purple-500/10 rounded-lg">
-                    <Clock className="w-6 h-6 text-purple-500" />
+                  <div className="p-3 bg-purple-100 rounded-lg">
+                    <Clock className="w-6 h-6 text-purple-600" />
                   </div>
-                  <span className="text-sm text-green-500 flex items-center">
+                  <span className="text-sm text-green-600 flex items-center">
                     <ArrowDownRight className="w-4 h-4 mr-1" />
                     -15%
                   </span>
                 </div>
-                <h3 className="text-gray-400 text-sm mb-2">Resolution Time</h3>
-                <p className="text-2xl font-bold text-white">2.5m</p>
+                <h3 className="text-gray-600 text-sm mb-2">Resolution Time</h3>
+                <p className="text-2xl font-bold text-gray-900">2.5m</p>
               </div>
 
-              <div className="bg-gray-800 rounded-lg p-6">
+              <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
                 <div className="flex items-center justify-between mb-4">
-                  <div className="p-3 bg-red-500/10 rounded-lg">
-                    <AlertCircle className="w-6 h-6 text-red-500" />
+                  <div className="p-3 bg-red-100 rounded-lg">
+                    <AlertCircle className="w-6 h-6 text-red-600" />
                   </div>
-                  <span className="text-sm text-red-500 flex items-center">
+                  <span className="text-sm text-red-600 flex items-center">
                     <ArrowUpRight className="w-4 h-4 mr-1" />
                     +0.8%
                   </span>
                 </div>
-                <h3 className="text-gray-400 text-sm mb-2">Churn Risk</h3>
-                <p className="text-2xl font-bold text-white">3.2%</p>
+                <h3 className="text-gray-600 text-sm mb-2">Churn Risk</h3>
+                <p className="text-2xl font-bold text-gray-900">3.2%</p>
               </div>
             </div>
 
             {/* Sentiment Over Time */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-              <div className="bg-gray-800 rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-white mb-4">Sentiment Trends</h3>
+              <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Sentiment Trends</h3>
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={mockData.satisfaction.sentimentOverTime}>
@@ -273,8 +273,8 @@ export function Analytics() {
               </div>
 
               {/* Escalation Rates */}
-              <div className="bg-gray-800 rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-white mb-4">Escalation Rates by Intent</h3>
+              <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Escalation Rates by Intent</h3>
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart
@@ -313,10 +313,7 @@ export function Analytics() {
                             style={{
                               transition: 'all 0.2s ease',
                               transformOrigin: 'left',
-                              cursor: 'pointer',
-                              '&:hover': {
-                                fill: '#8B5CF6'
-                              }
+                              cursor: 'pointer'
                             }}
                             onMouseEnter={(e) => {
                               const target = e.target as SVGElement;
@@ -338,16 +335,16 @@ export function Analytics() {
             </div>
 
             {/* Frustration Points */}
-            <div className="bg-gray-800 rounded-lg p-6">
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
               <div className="flex items-center gap-2 mb-6">
                 <AlertTriangle className="w-5 h-5 text-orange-500" />
-                <h3 className="text-lg font-semibold text-white">Top Frustration Points</h3>
+                <h3 className="text-lg font-semibold text-gray-900">Top Frustration Points</h3>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {mockData.satisfaction.frustrationPoints.map((point, index) => (
                   <div
                     key={index}
-                    className={`bg-gray-700 rounded-lg p-4 border ${
+                    className={`bg-gray-100 rounded-lg p-4 border ${
                       point.severity === 'high'
                         ? 'border-red-500/50'
                         : point.severity === 'medium'
@@ -355,9 +352,9 @@ export function Analytics() {
                         : 'border-yellow-500/50'
                     }`}
                   >
-                    <h4 className="text-white font-medium mb-2">{point.issue}</h4>
+                    <h4 className="text-gray-900 font-medium mb-2">{point.issue}</h4>
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-400">Occurrences</span>
+                      <span className="text-gray-600">Occurrences</span>
                       <span className={`${
                         point.severity === 'high'
                           ? 'text-red-400'
@@ -367,7 +364,7 @@ export function Analytics() {
                       }`}>{point.count}</span>
                     </div>
                     <div className="flex justify-between text-sm mt-1">
-                      <span className="text-gray-400">Severity</span>
+                      <span className="text-gray-600">Severity</span>
                       <span className={`${
                         point.severity === 'high'
                           ? 'text-red-400'
@@ -386,11 +383,11 @@ export function Analytics() {
       case 'behavior':
         return (
           <>
-            <h2 className="text-xl font-semibold text-white mb-6">User Behavior Analysis</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-6">User Behavior Analysis</h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
               {/* Session Duration Distribution */}
-              <div className="bg-gray-800 rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-white mb-4">Session Duration</h3>
+              <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Session Duration</h3>
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={mockData.userBehavior.sessionDuration}>
@@ -416,8 +413,8 @@ export function Analytics() {
               </div>
 
               {/* User Retention */}
-              <div className="bg-gray-800 rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-white mb-4">User Retention</h3>
+              <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">User Retention</h3>
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={mockData.userBehavior.retention}>
@@ -450,11 +447,11 @@ export function Analytics() {
       case 'revenue':
         return (
           <>
-            <h2 className="text-xl font-semibold text-white mb-6">Revenue Impact</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-6">Revenue Impact</h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
               {/* Revenue by Intent */}
-              <div className="bg-gray-800 rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-white mb-4">Revenue by Intent</h3>
+              <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Revenue by Intent</h3>
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={mockData.revenueData.byIntent}>
@@ -487,8 +484,8 @@ export function Analytics() {
               </div>
 
               {/* Revenue Trend */}
-              <div className="bg-gray-800 rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-white mb-4">Revenue Trend</h3>
+              <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Revenue Trend</h3>
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={mockData.revenueData.trending}>
@@ -521,11 +518,11 @@ export function Analytics() {
       case 'intent':
         return (
           <>
-            <h2 className="text-xl font-semibold text-white mb-6">Intent Analysis</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-6">Intent Analysis</h2>
             <div className="mb-8">
               {/* Intent Activity - now takes full width */}
-              <div className="bg-gray-800 rounded-lg p-6">
-                <h2 className="text-lg font-semibold text-white mb-6">Intent Activity</h2>
+              <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+                <h2 className="text-lg font-semibold text-gray-900 mb-6">Intent Activity</h2>
                 <div className="flex">
                   <div className="flex-1 h-96">
                     <ResponsiveContainer width="100%" height="100%">
@@ -577,7 +574,7 @@ export function Analytics() {
                           onClick={handleLegendClick}
                           formatter={(value: string, entry: LegendEntry) => (
                             <span style={{ 
-                              color: visibleLines[entry.dataKey] ? '#F3F4F6' : '#6B7280',
+                              color: visibleLines[entry.dataKey as string] ? '#F3F4F6' : '#6B7280',
                               cursor: 'pointer'
                             }}>
                               {value}
@@ -641,10 +638,10 @@ export function Analytics() {
             </div>
 
             {/* Missed Opportunities */}
-            <div className="bg-gray-800 rounded-lg p-6">
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
               <div className="flex items-center gap-2 mb-6">
                 <AlertTriangle className="w-5 h-5 text-orange-500" />
-                <h3 className="text-lg font-semibold text-white">Missed Opportunities</h3>
+                <h3 className="text-lg font-semibold text-gray-900">Missed Opportunities</h3>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[
@@ -669,15 +666,15 @@ export function Analytics() {
                 ].map((item, index) => (
                   <div
                     key={index}
-                    className="bg-gray-700 rounded-lg p-6 border border-gray-600"
+                    className="bg-gray-100 rounded-lg p-6 border border-gray-200"
                   >
-                    <h4 className="text-white font-medium mb-3">{item.intent}</h4>
+                    <h4 className="text-gray-900 font-medium mb-3">{item.intent}</h4>
                     <div className="flex justify-between text-sm mb-2">
-                      <span className="text-gray-400">Requests</span>
+                      <span className="text-gray-600">Requests</span>
                       <span className={`text-${item.color}-400`}>{item.count}</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-400">Potential Revenue</span>
+                      <span className="text-gray-600">Potential Revenue</span>
                       <span className={`text-${item.color}-400`}>{item.impact}</span>
                     </div>
                   </div>
@@ -693,26 +690,26 @@ export function Analytics() {
             {/* KPI Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
               {mockData.kpis.map((kpi, index) => (
-                <div key={index} className="bg-gray-800 rounded-lg p-6">
+                <div key={index} className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
                   <div className="flex items-center justify-between mb-4">
-                    <div className={`p-3 bg-${kpi.color}-500/10 rounded-lg`}>
-                      <kpi.icon className={`w-6 h-6 text-${kpi.color}-500`} />
+                    <div className={`p-3 bg-${kpi.color}-100 rounded-lg`}>
+                      <kpi.icon className={`w-6 h-6 text-${kpi.color}-600`} />
                     </div>
-                    <span className={`text-sm ${kpi.positive ? 'text-green-500' : 'text-red-500'} flex items-center`}>
+                    <span className={`text-sm ${kpi.positive ? 'text-green-600' : 'text-red-600'} flex items-center`}>
                       {kpi.positive ? <ArrowUpRight className="w-4 h-4 mr-1" /> : <ArrowDownRight className="w-4 h-4 mr-1" />}
                       {kpi.change}
                     </span>
                   </div>
-                  <h3 className="text-gray-400 text-sm mb-2">{kpi.title}</h3>
-                  <p className="text-2xl font-bold text-white">{kpi.value}</p>
+                  <h3 className="text-gray-600 text-sm mb-2">{kpi.title}</h3>
+                  <p className="text-2xl font-bold text-gray-900">{kpi.value}</p>
                 </div>
               ))}
             </div>
 
             {/* Intent Activity & Sentiment Analysis */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-              <div className="bg-gray-800 rounded-lg p-6">
-                <h2 className="text-lg font-semibold text-white mb-6">Intent Counts</h2>
+              <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+                <h2 className="text-lg font-semibold text-gray-900 mb-6">Intent Counts</h2>
                 <div className="h-96">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart 
@@ -812,8 +809,8 @@ export function Analytics() {
                 </div>
               </div>
 
-              <div className="bg-gray-800 rounded-lg p-6">
-                <h2 className="text-lg font-semibold text-white mb-6">Sentiment Analysis</h2>
+              <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+                <h2 className="text-lg font-semibold text-gray-900 mb-6">Sentiment Analysis</h2>
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={mockData.sentimentData}>
@@ -860,23 +857,23 @@ export function Analytics() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-900">
+    <div className="flex h-screen bg-white">
       <Sidebar activeSection={activeSection} onSectionChange={setActiveSection} />
       
       <div className="flex-1 overflow-auto">
         {/* Top Bar */}
-        <div className="sticky top-0 z-20 bg-gray-900 border-b border-gray-800">
+        <div className="sticky top-0 z-20 bg-white border-b border-gray-200">
           <div className="flex items-center justify-between px-6 py-4">
             <div className="flex items-center gap-4">
-              <h1 className="text-xl font-semibold text-white">Analytics Dashboard</h1>
+              <h1 className="text-xl font-semibold text-gray-900">Analytics Dashboard</h1>
               <ThemeToggle />
             </div>
             <div className="flex items-center gap-4">
-              <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 transition-colors">
-                <Filter className="w-4  h-4" />
+              <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-purple-100 text-purple-600 hover:bg-purple-200 transition-colors">
+                <Filter className="w-4 h-4" />
                 <span className="text-sm font-medium">Add Filter</span>
               </button>
-              <button className="px-3 py-1.5 rounded-lg bg-purple-500 text-white hover:bg-purple-600 transition-colors">
+              <button className="px-3 py-1.5 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition-colors">
                 Export
               </button>
             </div>
