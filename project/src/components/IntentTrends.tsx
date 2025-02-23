@@ -3,41 +3,47 @@ import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell, Cartes
 import { TrendingUp, TrendingDown, AlertTriangle } from 'lucide-react';
 import { intentCategories } from '../data/mockData';
 
+// Add type for intent categories at the top of the file
+type IntentCategory = 'supported' | 'unsupported';
+type IntentCategoriesType = {
+  [key in keyof typeof intentCategories]: IntentCategory;
+};
+
+// Update the TrendData interface to be more specific about intent types
 interface TrendData {
-  intent: string;
+  intent: keyof IntentCategoriesType;
   growth: number;
   volume: number;
   color: string;
 }
+
+// Map of intent colors from mockData
+const intentColors: { [key: string]: string } = {
+  'Book Flights': '#9333EA',
+  'Schedule Waymo': '#F97316',
+  'Call Uber': '#3B82F6',
+  'Boom SuperSonic Flights': '#10B981',
+  'Cruise Bookings': '#EF4444',
+  'Rental Cars': '#6366F1'
+};
 
 // Calculate growth rates from first to last data point in intentDistributionOverTime
 const calculateTrendData = (timeSeriesData: any[]): TrendData[] => {
   const firstDataPoint = timeSeriesData[0];
   const lastDataPoint = timeSeriesData[timeSeriesData.length - 1];
   
-  // Map of intent colors from mockData
-  const intentColors: { [key: string]: string } = {
-    'Book Flights': '#9333EA',
-    'Schedule Waymo': '#F97316',
-    'Call Uber': '#3B82F6',
-    'Boom SuperSonic Flights': '#10B981',
-    'Cruise Bookings': '#EF4444',
-    'Rental Cars': '#6366F1'
-  };
-
   return Object.keys(firstDataPoint)
     .filter(key => key !== 'date')
     .map(intent => {
       const initialValue = firstDataPoint[intent];
       const finalValue = lastDataPoint[intent];
       const growth = Math.round(Math.sign(finalValue - initialValue) * Math.log1p(Math.abs((finalValue - initialValue) / initialValue) * 100)) * 10;
-
       
       return {
-        intent,
+        intent: intent as keyof IntentCategoriesType,
         growth,
         volume: finalValue,
-        color: intentColors[intent] || '#6B7280' // fallback color
+        color: intentColors[intent] || '#6B7280'
       };
     });
 };

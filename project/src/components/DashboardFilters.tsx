@@ -15,10 +15,12 @@ interface FilterChip {
   type: 'user' | 'region' | 'device' | 'time';
 }
 
-const timeRanges: FilterOption[] = [
+const timeRangeOptions = [
   { id: '24h', label: 'Last 24 hours', value: '24h' },
   { id: '7d', label: 'Last 7 days', value: '7d' },
   { id: '30d', label: 'Last 30 days', value: '30d' },
+  { id: '3m', label: 'Last 3 months', value: '3m' },
+  { id: '6m', label: 'Last 6 months', value: '6m' },
   { id: 'custom', label: 'Custom range', value: 'custom' }
 ];
 
@@ -45,7 +47,7 @@ const getFilterTypeFromGroup = (group: string | undefined): 'user' | 'region' | 
 };
 
 export function DashboardFilters() {
-  const [selectedTime, setSelectedTime] = useState<FilterOption>(timeRanges[0]);
+  const [selectedTime, setSelectedTime] = useState<FilterOption>(timeRangeOptions[0]);
   const [selectedFilters, setSelectedFilters] = useState<FilterChip[]>([]);
   const [isUserTypeOpen, setIsUserTypeOpen] = useState(false);
   const [isRegionOpen, setIsRegionOpen] = useState(false);
@@ -111,11 +113,11 @@ export function DashboardFilters() {
               <div className="absolute z-10 w-56 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg">
                 <div className="p-2">
                   <div className="px-3 py-2 text-sm text-gray-500 font-medium">TIME RANGE</div>
-                  {timeRanges.map(timeRange => (
+                  {timeRangeOptions.map(timeRange => (
                     <button 
                       key={timeRange.id}
                       className={`w-full px-3 py-2 text-left rounded flex items-center justify-between ${
-                        selectedTime.id === timeRange.id
+                        selectedTime.value === timeRange.value
                           ? 'bg-purple-50 text-purple-600'
                           : 'text-gray-700 hover:bg-purple-50 hover:text-purple-600'
                       }`}
@@ -125,7 +127,7 @@ export function DashboardFilters() {
                       }}
                     >
                       {timeRange.label}
-                      {selectedTime.id === timeRange.id && (
+                      {selectedTime.value === timeRange.value && (
                         <div className="w-2 h-2 rounded-full bg-purple-600" />
                       )}
                     </button>

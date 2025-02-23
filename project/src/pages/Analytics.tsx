@@ -40,8 +40,57 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   );
 };
 
+// Add type for intent keys
+type IntentKey = keyof typeof intentCategories;
+
+const calculateNormalizedGrowth = (intent: IntentKey): string => {
+  const data = mockData.intentDistributionOverTime;
+  if (!data || data.length < 2) return '+0.0%';
+  
+  const initialValue = data[0][intent];
+  const finalValue = data[data.length - 1][intent];
+  
+  if (initialValue === 0) return '+0.0%';
+  
+  // Using logarithmic normalization formula
+  const normalizedGrowth = Math.round(
+    Math.sign(finalValue - initialValue) * 
+    Math.log1p(Math.abs((finalValue - initialValue) / initialValue) * 100)
+  ) * 10;
+  
+  return `${normalizedGrowth >= 0 ? '+' : ''}${normalizedGrowth.toFixed(1)}%`;
+};
+
+// Add this function to filter and sort opportunities
+const getGrowingUnsupportedIntents = () => {
+  const intents = Object.keys(intentCategories) as IntentKey[];
+  
+  return intents
+    .filter(intent => {
+      // Only include unsupported intents
+      if (intentCategories[intent] !== 'unsupported') return false;
+      
+      // Calculate growth to check if it's growing
+      const data = mockData.intentDistributionOverTime;
+      const initialValue = data[0][intent];
+      const finalValue = data[data.length - 1][intent];
+      return finalValue > initialValue;
+    })
+    .map(intent => ({
+      intent,
+      count: mockData.intentDistributionOverTime[mockData.intentDistributionOverTime.length - 1][intent],
+      color: intent === 'Schedule Waymo' ? 'orange' : 'emerald' // Maintain existing colors
+    }))
+    .sort((a, b) => {
+      // Sort by normalized growth rate in descending order
+      const growthA = Number(calculateNormalizedGrowth(a.intent).replace(/[^-\d.]/g, ''));
+      const growthB = Number(calculateNormalizedGrowth(b.intent).replace(/[^-\d.]/g, ''));
+      return growthB - growthA;
+    });
+};
+
 export function Analytics() {
-  const [activeSection, setActiveSection] = useState('engagement');
+  const [activeSection, setActiveSection] = useState('intent');
   const [visibleLines, setVisibleLines] = useState<Record<string, boolean>>({
     'Book Flights': true,
     'Schedule Waymo': true,
@@ -615,28 +664,11 @@ export function Analytics() {
                 <AlertTriangle className="w-5 h-5 text-orange-500" />
                 <h3 className="text-lg font-semibold text-gray-900">Opportunities</h3>
               </div>
-              <p className="text-sm text-gray-500 mb-6">Identify potential revenue and engagement opportunities that weren't fully captured, helping prioritize improvements</p>
+              <p className="text-sm text-gray-500 mb-6">
+                Growing unsupported intents that could be prioritized for implementation
+              </p>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[
-                  {
-                    intent: 'Schedule Waymo',
-                    count: 450000,
-                    impact: '$125,000',
-                    color: 'orange'
-                  },
-                  {
-                    intent: 'Boom SuperSonic Flights',
-                    count: 115000,
-                    impact: '$85,000',
-                    color: 'emerald'
-                  },
-                  {
-                    intent: 'Book Flights',
-                    count: 850000,
-                    impact: '$45,000',
-                    color: 'purple'
-                  }
-                ].map((item, index) => (
+                {getGrowingUnsupportedIntents().map((item, index) => (
                   <div
                     key={index}
                     className="bg-gray-100 rounded-lg p-6 border border-gray-200 relative"
@@ -660,12 +692,12 @@ export function Analytics() {
                     </div>
                     <h4 className="text-gray-900 font-medium mb-3 pr-24">{item.intent}</h4>
                     <div className="flex justify-between text-sm mb-2">
-                      <span className="text-gray-600">Requests</span>
+                      <span className="text-gray-600">Request Volume</span>
                       <span className={`text-${item.color}-400`}>{item.count.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">Potential Revenue</span>
-                      <span className={`text-${item.color}-400`}>{item.impact}</span>
+                      <span className="text-gray-600">Normalized Growth</span>
+                      <span className={`text-${item.color}-400`}>{calculateNormalizedGrowth(item.intent)}</span>
                     </div>
                   </div>
                 ))}
