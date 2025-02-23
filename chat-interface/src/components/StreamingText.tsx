@@ -8,6 +8,7 @@ interface StreamingTextProps {
 
 export const StreamingText = ({ text, isStreaming = true, onStreamingComplete }: StreamingTextProps) => {
   const [displayedText, setDisplayedText] = useState('');
+  const [isComplete, setIsComplete] = useState(false);
   const hasCalledComplete = useRef(false);
   const onStreamingCompleteRef = useRef(onStreamingComplete);
 
@@ -17,12 +18,15 @@ export const StreamingText = ({ text, isStreaming = true, onStreamingComplete }:
   }, [onStreamingComplete]);
 
   useEffect(() => {
+    let cancelled = false;
     hasCalledComplete.current = false;
     setDisplayedText('');
+    setIsComplete(false);
     const words = text.split(' ');
     
     if (!isStreaming) {
       setDisplayedText(text);
+      setIsComplete(true);
       if (onStreamingCompleteRef.current && !hasCalledComplete.current) {
         hasCalledComplete.current = true;
         onStreamingCompleteRef.current();
@@ -32,18 +36,25 @@ export const StreamingText = ({ text, isStreaming = true, onStreamingComplete }:
 
     let currentIndex = 0;
     async function streamWords() {
-      while (currentIndex < words.length) {
+      while (currentIndex < words.length && !cancelled) {
         await new Promise(resolve => setTimeout(resolve, 50));
+        if (cancelled) break;
         setDisplayedText(prev => prev + (prev ? ' ' : '') + words[currentIndex]);
         currentIndex++;
       }
-      if (onStreamingCompleteRef.current && !hasCalledComplete.current) {
-        hasCalledComplete.current = true;
-        onStreamingCompleteRef.current();
+      if (!cancelled) {
+        setIsComplete(true);
+        if (onStreamingCompleteRef.current && !hasCalledComplete.current) {
+          hasCalledComplete.current = true;
+          onStreamingCompleteRef.current();
+        }
       }
     }
     streamWords();
+    return () => {
+      cancelled = true;
+    };
   }, [text, isStreaming]);
 
-  return <span>{displayedText}</span>;
+  return <span className={isComplete ? 'final-text' : 'streaming-text'}>{displayedText}</span>;
 };
