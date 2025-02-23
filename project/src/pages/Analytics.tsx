@@ -6,13 +6,18 @@ import { WordCloud } from '../components/WordCloud';
 import { IntentTrends } from '../components/IntentTrends';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  AreaChart, Area, BarChart, Bar, Cell, PieChart, Pie
+  AreaChart, Area, BarChart, Bar, Cell, PieChart, Pie, Legend
 } from 'recharts';
 import {
   TrendingUp, Clock, DollarSign, Users, ArrowUpRight,
   ArrowDownRight, Activity, Filter, AlertTriangle,
   Heart, MessageSquare, AlertCircle
 } from 'lucide-react';
+
+interface LegendEntry {
+  dataKey: keyof typeof visibleLines;
+  value: string;
+}
 
 const mockData = {
   kpis: [
@@ -129,12 +134,33 @@ const mockData = {
       { intent: 'Booking Issues', rate: 30, total: 1500 },
       { intent: 'Price Match', rate: 20, total: 600 }
     ]
-  }
+  },
+  intentDistributionOverTime: [
+    { date: '2024-01', 'Flight Booking': 800000, 'Taxi Booking': 543000, 'Check Loyalty Points': 104000, 'Private Flights': 23000 },
+    { date: '2024-02', 'Flight Booking': 820000, 'Taxi Booking': 553000, 'Check Loyalty Points': 114000, 'Private Flights': 25000 },
+    { date: '2024-03', 'Flight Booking': 790000, 'Taxi Booking': 563000, 'Check Loyalty Points': 124000, 'Private Flights': 28000 },
+    { date: '2024-04', 'Flight Booking': 850000, 'Taxi Booking': 573000, 'Check Loyalty Points': 134000, 'Private Flights': 30000 },
+    { date: '2024-05', 'Flight Booking': 880000, 'Taxi Booking': 583000, 'Check Loyalty Points': 144000, 'Private Flights': 32000 },
+    { date: '2024-06', 'Flight Booking': 900000, 'Taxi Booking': 593000, 'Check Loyalty Points': 154000, 'Private Flights': 35000 },
+  ],
 };
 
 export function Analytics() {
   const [activeSection, setActiveSection] = useState('engagement');
+  const [visibleLines, setVisibleLines] = useState({
+    'Flight Booking': true,
+    'Taxi Booking': true,
+    'Check Loyalty Points': true,
+    'Private Flights': true
+  });
   const [hoveredKeyword, setHoveredKeyword] = useState(null);
+
+  const handleLegendClick = (entry: any) => {
+    setVisibleLines(prev => ({
+      ...prev,
+      [entry.dataKey]: !prev[entry.dataKey]
+    }));
+  };
 
   const renderSection = () => {
     switch (activeSection) {
@@ -275,7 +301,36 @@ export function Analytics() {
                         dataKey="rate"
                         fill="#8B5CF6"
                         radius={[0, 4, 4, 0]}
-                      />
+                        activeBar={{ fill: '#8B5CF6' }}
+                        onMouseOver={(state) => {
+                          return null;
+                        }}
+                      >
+                        {mockData.satisfaction.escalationsByIntent.map((entry, index) => (
+                          <Cell
+                            key={`cell-${index}`}
+                            fill="#8B5CF6"
+                            style={{
+                              transition: 'all 0.2s ease',
+                              transformOrigin: 'left',
+                              cursor: 'pointer',
+                              '&:hover': {
+                                fill: '#8B5CF6'
+                              }
+                            }}
+                            onMouseEnter={(e) => {
+                              const target = e.target as SVGElement;
+                              target.style.transform = 'scaleX(1.1)';
+                              target.style.fill = '#8B5CF6';
+                            }}
+                            onMouseLeave={(e) => {
+                              const target = e.target as SVGElement;
+                              target.style.transform = 'scaleX(1)';
+                              target.style.fill = '#8B5CF6';
+                            }}
+                          />
+                        ))}
+                      </Bar>
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
@@ -467,56 +522,131 @@ export function Analytics() {
         return (
           <>
             <h2 className="text-xl font-semibold text-white mb-6">Intent Analysis</h2>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-              {/* Intent Distribution */}
+            <div className="mb-8">
+              {/* Intent Activity - now takes full width */}
               <div className="bg-gray-800 rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-white mb-4">Intent Distribution</h3>
-                <div className="h-80">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={mockData.intentDistribution}
-                        dataKey="users"
-                        nameKey="intent"
-                        cx="50%"
-                        cy="50%"
-                        outerRadius={80}
-                        label
+                <h2 className="text-lg font-semibold text-white mb-6">Intent Activity</h2>
+                <div className="flex">
+                  <div className="flex-1 h-96">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart 
+                        data={mockData.intentDistributionOverTime}
+                        margin={{ left: 60, right: 30, top: 30, bottom: 30 }}
                       >
-                        {mockData.intentDistribution.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: '#1F2937',
-                          border: 'none',
-                          borderRadius: '0.5rem',
-                          color: '#F3F4F6',
-                        }}
-                      />
-                    </PieChart>
-                  </ResponsiveContainer>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                        <XAxis 
+                          dataKey="date" 
+                          stroke="#9CA3AF"
+                          label={{ 
+                            value: 'Date', 
+                            position: 'bottom',
+                            offset: 10,
+                            style: { fill: '#9CA3AF' }
+                          }}
+                        />
+                        <YAxis 
+                          stroke="#9CA3AF"
+                          label={{ 
+                            value: 'Number of Users', 
+                            angle: -90, 
+                            position: 'left',
+                            offset: 20,
+                            style: { fill: '#9CA3AF' },
+                            dy: -20
+                          }}
+                        />
+                        <Tooltip
+                          contentStyle={{
+                            backgroundColor: '#1F2937',
+                            border: 'none',
+                            borderRadius: '0.5rem',
+                            color: '#F3F4F6',
+                          }}
+                          formatter={(value: number) => [
+                            `${(value / 1000).toFixed(0)}K users`,
+                            'Users'
+                          ]}
+                        />
+                        <Legend
+                          layout="vertical"
+                          verticalAlign="middle"
+                          align="right"
+                          wrapperStyle={{
+                            paddingLeft: '32px',
+                          }}
+                          onClick={handleLegendClick}
+                          formatter={(value: string, entry: LegendEntry) => (
+                            <span style={{ 
+                              color: visibleLines[entry.dataKey] ? '#F3F4F6' : '#6B7280',
+                              cursor: 'pointer'
+                            }}>
+                              {value}
+                            </span>
+                          )}
+                        />
+                        <Line
+                          type="monotoneX"
+                          dataKey="Flight Booking"
+                          name="Flight Booking"
+                          stroke="#9333EA"
+                          strokeWidth={2}
+                          dot={false}
+                          activeDot={{ r: 4, fill: '#9333EA' }}
+                          hide={!visibleLines['Flight Booking']}
+                          connectNulls={true}
+                        />
+                        <Line
+                          type="monotoneX"
+                          dataKey="Taxi Booking"
+                          name="Taxi Booking"
+                          stroke="#F97316"
+                          strokeWidth={2}
+                          dot={false}
+                          activeDot={{ r: 4, fill: '#F97316' }}
+                          hide={!visibleLines['Taxi Booking']}
+                          connectNulls={true} 
+                        />
+                        <Line
+                          type="monotoneX"
+                          dataKey="Check Loyalty Points"
+                          name="Loyalty Points"
+                          stroke="#3B82F6"
+                          strokeWidth={2}
+                          dot={false}
+                          activeDot={{ r: 4, fill: '#3B82F6' }}
+                          hide={!visibleLines['Check Loyalty Points']}
+                          connectNulls={true}
+                        />
+                        <Line
+                          type="monotoneX"
+                          dataKey="Private Flights"
+                          name="Private Flights"
+                          stroke="#10B981"
+                          strokeWidth={2}
+                          dot={false}
+                          activeDot={{ r: 4, fill: '#10B981' }}
+                          hide={!visibleLines['Private Flights']}
+                          connectNulls={true}
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
                 </div>
               </div>
-
-              {/* Trending Keywords */}
-              <WordCloud
-                keywords={mockData.trendingKeywords}
-                onKeywordHover={setHoveredKeyword}
-              />
             </div>
 
             {/* Intent Trends */}
-            <IntentTrends showGrowth={true} />
+            <div className="mb-8">
+              <IntentTrends showGrowth={true} />
+            </div>
 
-            {/* Failed Intents */}
+            {/* Missed Opportunities */}
             <div className="bg-gray-800 rounded-lg p-6">
-              <div className="flex items-center gap-2 mb-4">
+              <div className="flex items-center gap-2 mb-6">
                 <AlertTriangle className="w-5 h-5 text-orange-500" />
-                <h3 className="text-lg font-semibold text-white">Failed Intents</h3>
+                <h3 className="text-lg font-semibold text-white">Missed Opportunities</h3>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[
                   {
                     intent: 'Hotel Bundle Booking',
@@ -539,14 +669,14 @@ export function Analytics() {
                 ].map((item, index) => (
                   <div
                     key={index}
-                    className="bg-gray-700 rounded-lg p-4 border border-gray-600"
+                    className="bg-gray-700 rounded-lg p-6 border border-gray-600"
                   >
-                    <h4 className="text-white font-medium mb-2">{item.intent}</h4>
-                    <div className="flex justify-between text-sm">
+                    <h4 className="text-white font-medium mb-3">{item.intent}</h4>
+                    <div className="flex justify-between text-sm mb-2">
                       <span className="text-gray-400">Requests</span>
                       <span className={`text-${item.color}-400`}>{item.count}</span>
                     </div>
-                    <div className="flex justify-between text-sm mt-1">
+                    <div className="flex justify-between text-sm">
                       <span className="text-gray-400">Potential Revenue</span>
                       <span className={`text-${item.color}-400`}>{item.impact}</span>
                     </div>
@@ -579,44 +709,105 @@ export function Analytics() {
               ))}
             </div>
 
-            {/* Intent Distribution & Sentiment Analysis */}
+            {/* Intent Activity & Sentiment Analysis */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
               <div className="bg-gray-800 rounded-lg p-6">
-                <h2 className="text-lg font-semibold text-white mb-6">Intent Distribution</h2>
-                <div className="h-80">
+                <h2 className="text-lg font-semibold text-white mb-6">Intent Counts</h2>
+                <div className="h-96">
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={mockData.intentDistribution} layout="vertical">
+                    <LineChart 
+                      data={mockData.intentDistributionOverTime}
+                      margin={{ left: 60, right: 30, top: 30, bottom: 30 }}
+                    >
                       <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                      <XAxis type="number" stroke="#9CA3AF" />
-                      <YAxis
-                        dataKey="intent"
-                        type="category"
+                      <XAxis 
+                        dataKey="date" 
                         stroke="#9CA3AF"
-                        width={120}
+                        label={{ 
+                          value: 'Date', 
+                          position: 'bottom',
+                          offset: 10,
+                          style: { fill: '#9CA3AF' }
+                        }}
+                      />
+                      <YAxis 
+                        stroke="#9CA3AF"
+                        label={{ 
+                          value: 'Number of Users', 
+                          angle: -90, 
+                          position: 'left',
+                          offset: 20,
+                          style: { fill: '#9CA3AF' },
+                          dy: -20
+                        }}
                       />
                       <Tooltip
                         contentStyle={{
                           backgroundColor: '#F7F8FA',
                           border: 'none',
                           borderRadius: '0.5rem',
-                          color: '#1F2937', // Changed to a dark gray color for better contrast
-                          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', // Added subtle shadow for better visibility
+                          color: '#1F2937',
+                          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
                         }}
                         formatter={(value: number) => [
                           `${(value / 1000).toFixed(0)}K users`,
                           'Users'
                         ]}
                       />
-                      <Bar
-                        dataKey="users"
-                        radius={[0, 8, 8, 0]}
-                        activeBar={false}
-                      >
-                        {mockData.intentDistribution.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Bar>
-                    </BarChart>
+                      <Legend
+                        verticalAlign="bottom"
+                        height={36}
+                        iconType="circle"
+                        iconSize={8}
+                        wrapperStyle={{
+                          paddingTop: '20px',
+                        }}
+                      />
+                      <Line
+                        type="monotoneX"
+                        dataKey="Flight Booking"
+                        name="Flight Booking"
+                        stroke="#9333EA"
+                        strokeWidth={2}
+                        dot={false}
+                        activeDot={{ r: 4, fill: '#9333EA' }}
+                        hide={!visibleLines['Flight Booking']}
+                        connectNulls={true}
+                      />
+                      <Line
+                        type="monotoneX"
+                        dataKey="Taxi Booking"
+                        name="Taxi Booking"
+                        stroke="#F97316"
+                        strokeWidth={2}
+                        dot={false}
+                        activeDot={{ r: 4, fill: '#F97316' }}
+                        hide={!visibleLines['Taxi Booking']}
+                        connectNulls={true}
+                      />
+                      <Line
+                        type="monotoneX"
+                        dataKey="Check Loyalty Points"
+                        name="Loyalty Points"
+                        stroke="#3B82F6"
+                        strokeWidth={2}
+                        dot={false}
+                        activeDot={{ r: 4, fill: '#3B82F6' }}
+                        hide={!visibleLines['Check Loyalty Points']}
+                        connectNulls={true}
+                      />
+                      <Line
+                        type="monotoneX"
+                        dataKey="Private Flights"
+                        name="Private Flights"
+                        stroke="#10B981"
+                        strokeWidth={2}
+                        dot={false}
+                        activeDot={{ r: 4, fill: '#10B981' }}
+                        hide={!visibleLines['Private Flights']}
+                        connectNulls={true}
+                      />
+                    </LineChart>
                   </ResponsiveContainer>
                 </div>
               </div>
