@@ -10,21 +10,42 @@ interface Message {
   isComplete?: boolean;
 }
 
+// Define an array of 5 bot responses
+const botResponses = [
+  "I can help you plan your trip! Would you like to search for flights or hotels?",
+  "Certainly! Let's explore your travel options.",
+  "How about checking out some hotels?",
+  "Great! I'll search for the best flight deals.",
+  "Would you like some car rental options?"
+];
+
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [hasStartedChat, setHasStartedChat] = useState(false);
+  const [botIndex, setBotIndex] = useState(0);
 
   const handleSubmit = (value: string) => {
-    setMessages(prev => [...prev, { text: value, isUser: true, isComplete: true }]);
+    // Add user's message and bot's incomplete message together
+    setMessages(prev => {
+      const newMessages = [
+        ...prev,
+        { text: value, isUser: true, isComplete: true },
+        { text: botResponses[botIndex], isUser: false, isComplete: false }
+      ];
+      return newMessages;
+    });
     setHasStartedChat(true);
-    // Simulate bot response
+    setBotIndex(prevIndex => (prevIndex + 1) % botResponses.length);
+
+    // Simulate streaming: mark the bot message as complete after a delay
     setTimeout(() => {
-      setMessages(prev => [...prev, { 
-        text: "I can help you plan your trip! Would you like to search for flights or hotels?", 
-        isUser: false,
-        isComplete: false
-      }]);
-    }, 1000);
+      setMessages(prev => {
+        const botMsgIndex = prev.length - 1; // last message added
+        return prev.map((msg, i) =>
+          i === botMsgIndex ? { ...msg, isComplete: true } : msg
+        );
+      });
+    }, 1500);
   };
 
   const handleStreamComplete = useCallback((index: number) => {

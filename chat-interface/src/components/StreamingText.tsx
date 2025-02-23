@@ -37,7 +37,7 @@ export const StreamingText = ({ text, isStreaming = true, onStreamingComplete }:
     let currentIndex = 0;
     async function streamWords() {
       while (currentIndex < words.length && !cancelled) {
-        await new Promise(resolve => setTimeout(resolve, 50));
+        await new Promise(resolve => setTimeout(resolve, 75));
         if (cancelled) break;
         setDisplayedText(prev => prev + (prev ? ' ' : '') + words[currentIndex]);
         currentIndex++;
