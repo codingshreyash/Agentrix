@@ -1,6 +1,7 @@
 import React from 'react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell, CartesianGrid } from 'recharts';
-import { TrendingUp, TrendingDown } from 'lucide-react';
+import { TrendingUp, TrendingDown, AlertTriangle } from 'lucide-react';
+import { intentCategories } from '../data/mockData';
 
 interface TrendData {
   intent: string;
@@ -9,30 +10,55 @@ interface TrendData {
   color: string;
 }
 
-const mockTrendData: TrendData[] = [
-  { intent: 'Blade Helicopter', growth: 135, volume: 2500, color: '#10B981' },
-  { intent: 'Luxury Car Rental', growth: 85, volume: 5000, color: '#10B981' },
-  { intent: 'Private Jet', growth: 45, volume: 1200, color: '#10B981' },
-  { intent: 'Regular Taxi', growth: -5, volume: 15000, color: '#EF4444' },
-  { intent: 'Bus Booking', growth: -20, volume: 8000, color: '#EF4444' },
-  { intent: 'Train Tickets', growth: -35, volume: 6000, color: '#EF4444' },
-];
+// Calculate growth rates from first to last data point in intentDistributionOverTime
+const calculateTrendData = (timeSeriesData: any[]): TrendData[] => {
+  const firstDataPoint = timeSeriesData[0];
+  const lastDataPoint = timeSeriesData[timeSeriesData.length - 1];
+  
+  // Map of intent colors from mockData
+  const intentColors: { [key: string]: string } = {
+    'Book Flights': '#9333EA',
+    'Schedule Waymo': '#F97316',
+    'Call Uber': '#3B82F6',
+    'Boom SuperSonic Flights': '#10B981',
+    'Cruise Bookings': '#EF4444',
+    'Rental Cars': '#6366F1'
+  };
+
+  return Object.keys(firstDataPoint)
+    .filter(key => key !== 'date')
+    .map(intent => {
+      const initialValue = firstDataPoint[intent];
+      const finalValue = lastDataPoint[intent];
+      const growth = Math.round(Math.sign(finalValue - initialValue) * Math.log1p(Math.abs((finalValue - initialValue) / initialValue) * 100)) * 10;
+
+      
+      return {
+        intent,
+        growth,
+        volume: finalValue,
+        color: intentColors[intent] || '#6B7280' // fallback color
+      };
+    });
+};
 
 interface IntentTrendsProps {
-  showGrowth?: boolean;
+  data: any[];
 }
 
-export function IntentTrends({ showGrowth = true }: IntentTrendsProps) {
+export function IntentTrends({ data }: IntentTrendsProps) {
   const [metric, setMetric] = React.useState<'growth' | 'volume'>('growth');
   const [hoveredBar, setHoveredBar] = React.useState<number | null>(null);
   
-  const sortedData = [...mockTrendData].sort((a, b) => 
+  const trendData = React.useMemo(() => calculateTrendData(data), [data]);
+  
+  const sortedData = [...trendData].sort((a, b) => 
     metric === 'growth' ? b.growth - a.growth : b.volume - a.volume
   );
 
   return (
     <div className="rounded-xl p-6 bg-white border border-gray-300">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-2">
         <h2 className="text-lg font-semibold text-gray-900">Trends</h2>
         <div className="flex items-center gap-2">
           <button
@@ -57,6 +83,7 @@ export function IntentTrends({ showGrowth = true }: IntentTrendsProps) {
           </button>
         </div>
       </div>
+      <p className="text-sm text-gray-500 mb-6">Analyze the growth and popularity of different user intents to identify emerging patterns and user preferences</p>
 
       <div className="h-80">
         <ResponsiveContainer width="100%" height="100%">
@@ -121,12 +148,22 @@ export function IntentTrends({ showGrowth = true }: IntentTrendsProps) {
         <div className="rounded-xl p-4 border border-gray-200">
           <div className="flex items-center gap-2 text-emerald-400 mb-2">
             <TrendingUp className="w-5 h-5" />
-            <span className="font-medium">Fastest Growing</span>
+            <span className="font-medium">Growing</span>
           </div>
           <div className="space-y-2">
-            {sortedData.slice(0, 3).map(item => (
+            {sortedData.filter(item => item.growth > 0).slice(0, 4).map(item => (
               <div key={item.intent} className="flex justify-between items-center">
-                <span className="text-gray-900">{item.intent}</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-900">{item.intent}</span>
+                  {intentCategories[item.intent] === 'unsupported' && (
+                    <div className="relative group">
+                      <AlertTriangle className="w-4 h-4 text-red-500 cursor-help" />
+                      <div className="absolute z-10 invisible group-hover:visible bg-gray-900 text-white text-sm rounded-lg py-1 px-2 -right-4 -top-8 whitespace-nowrap">
+                        Your don't support this feature
+                      </div>
+                    </div>
+                  )}
+                </div>
                 <span className="text-emerald-400">+{item.growth}%</span>
               </div>
             ))}
@@ -139,9 +176,19 @@ export function IntentTrends({ showGrowth = true }: IntentTrendsProps) {
             <span className="font-medium">Declining</span>
           </div>
           <div className="space-y-2">
-            {sortedData.slice(-3).reverse().map(item => (
+            {sortedData.filter(item => item.growth < 0).map(item => (
               <div key={item.intent} className="flex justify-between items-center">
-                <span className="text-gray-900">{item.intent}</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-900">{item.intent}</span>
+                  {intentCategories[item.intent] === 'unsupported' && (
+                    <div className="relative group">
+                      <AlertTriangle className="w-4 h-4 text-red-500 cursor-help" />
+                      <div className="absolute z-10 invisible group-hover:visible bg-gray-900 text-white text-sm rounded-lg py-1 px-2 -right-4 -top-8 whitespace-nowrap">
+                        Your agent does not support this feature
+                      </div>
+                    </div>
+                  )}
+                </div>
                 <span className="text-red-400">{item.growth}%</span>
               </div>
             ))}
