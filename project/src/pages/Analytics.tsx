@@ -15,8 +15,8 @@ import {
 const mockData = {
   kpis: [
     {
-      title: 'Total Interactions',
-      value: '34.35M',
+      title: 'Daily Active Users',
+      value: '1.35M',
       change: '+12.5%',
       positive: true,
       icon: TrendingUp,
@@ -39,7 +39,7 @@ const mockData = {
       color: 'orange'
     },
     {
-      title: 'Escalation Rate',
+      title: 'Human Escalation Rate',
       value: '4.8%',
       change: '-2.1%',
       positive: true,
