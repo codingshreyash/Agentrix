@@ -9,6 +9,7 @@ interface Message {
   text: string;
   isUser: boolean;
   isComplete?: boolean;
+  showFlightsWidget?: boolean;
 }
 
 // Define an array of 5 bot responses
@@ -31,7 +32,12 @@ export default function Home() {
       const newMessages = [
         ...prev,
         { text: value, isUser: true, isComplete: true },
-        { text: botResponses[botIndex], isUser: false, isComplete: false }
+        { 
+          text: botResponses[botIndex], 
+          isUser: false, 
+          isComplete: false,
+          showFlightsWidget: botResponses[botIndex] === "Certainly! Let's explore your travel options."
+        }
       ];
       return newMessages;
     });

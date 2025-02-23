@@ -8,6 +8,7 @@ interface Message {
   text: string;
   isUser: boolean;
   isComplete?: boolean;
+  showFlightsWidget?: boolean;
 }
 
 interface ChatInterfaceProps {
@@ -42,6 +43,7 @@ export const ChatInterface = ({ messages, onSendMessage, onStreamComplete }: Cha
               isUser={message.isUser}
               isStreaming={!message.isUser && !message.isComplete}
               onStreamingComplete={() => handleStreamingCompleteForIndex(index)}
+              showFlightsWidget={message.showFlightsWidget}
               actions={!message.isUser && message.isComplete ? (
                 <MessageActions 
                   onRegenerate={() => console.log('regenerate')}

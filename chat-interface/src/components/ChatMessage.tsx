@@ -1,4 +1,5 @@
 import { StreamingText } from './StreamingText';
+import SampleFlightsRow  from './SampleFlightsRow';
 
 interface ChatMessageProps {
   message: string;
@@ -6,6 +7,7 @@ interface ChatMessageProps {
   isStreaming?: boolean;
   onStreamingComplete?: () => void;
   actions?: React.ReactNode;
+  showFlightsWidget?: boolean;
 }
 
 export const ChatMessage = ({ 
@@ -13,7 +15,8 @@ export const ChatMessage = ({
   isUser = false, 
   isStreaming = false,
   onStreamingComplete,
-  actions 
+  actions,
+  showFlightsWidget = false
 }: ChatMessageProps) => {
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
@@ -22,11 +25,14 @@ export const ChatMessage = ({
           {isUser ? (
             message
           ) : (
-            <StreamingText 
-              text={message} 
-              isStreaming={isStreaming}
-              onStreamingComplete={onStreamingComplete}
-            />
+            <>
+              <StreamingText 
+                text={message} 
+                isStreaming={isStreaming}
+                onStreamingComplete={onStreamingComplete}
+              />
+              {!isStreaming && showFlightsWidget && <SampleFlightsRow />}
+            </>
           )}
         </div>
         {actions && !isStreaming && (
