@@ -9,6 +9,12 @@ interface FilterOption {
   group?: string;
 }
 
+interface FilterChip {
+  id: string;
+  label: string;
+  type: 'user' | 'region' | 'device' | 'time';
+}
+
 const timeRanges: FilterOption[] = [
   { id: '24h', label: 'Last 24 hours', value: '24h' },
   { id: '7d', label: 'Last 7 days', value: '7d' },
@@ -25,10 +31,44 @@ const demographics: FilterOption[] = [
   { id: 'asia', label: 'Asia', value: 'asia', group: 'Region' }
 ];
 
+const getFilterTypeFromGroup = (group: string | undefined): 'user' | 'region' | 'device' | 'time' => {
+  switch (group) {
+    case 'User Type':
+      return 'user';
+    case 'Region':
+      return 'region';
+    case 'Device Type':
+      return 'device';
+    default:
+      return 'time';
+  }
+};
+
 export function DashboardFilters() {
   const [selectedTime, setSelectedTime] = React.useState<FilterOption>(timeRanges[0]);
   const [selectedDemographics, setSelectedDemographics] = React.useState<FilterOption[]>([]);
   const [customDateRange, setCustomDateRange] = React.useState({ start: '', end: '' });
+
+  // Example selected filters
+  const selectedFilters: FilterChip[] = [
+    { id: '1', label: 'New Users', type: 'user' },
+    { id: '2', label: 'North America', type: 'region' }
+  ];
+
+  const getFilterColors = (type: string) => {
+    switch (type) {
+      case 'user':
+        return 'bg-emerald-100 text-emerald-700';
+      case 'region':
+        return 'bg-blue-100 text-blue-700';
+      case 'device':
+        return 'bg-orange-100 text-orange-700';
+      case 'time':
+        return 'bg-purple-100 text-purple-700';
+      default:
+        return 'bg-gray-100 text-gray-700';
+    }
+  };
 
   return (
     <div className="bg-white border-b border-gray-200">
@@ -84,20 +124,25 @@ export function DashboardFilters() {
 
           {/* Selected Filters Display */}
           <div className="flex flex-wrap items-center gap-2">
-            {selectedDemographics.map((demo) => (
-              <span
-                key={demo.id}
-                className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-purple-100 text-purple-600 text-sm"
-              >
-                {demo.label}
-                <button
-                  onClick={() => setSelectedDemographics(prev => prev.filter(d => d.id !== demo.id))}
-                  className="hover:text-purple-700"
+            {selectedDemographics.map((demo) => {
+              const filterType = getFilterTypeFromGroup(demo.group);
+              const colorClasses = getFilterColors(filterType);
+              
+              return (
+                <span
+                  key={demo.id}
+                  className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-sm ${colorClasses}`}
                 >
-                  <X className="w-3 h-3" />
-                </button>
-              </span>
-            ))}
+                  {demo.label}
+                  <button
+                    onClick={() => setSelectedDemographics(prev => prev.filter(d => d.id !== demo.id))}
+                    className="hover:opacity-75"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              );
+            })}
           </div>
         </div>
       </div>

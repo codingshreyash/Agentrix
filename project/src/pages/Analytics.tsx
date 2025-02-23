@@ -157,15 +157,15 @@ export function Analytics() {
   // New state for per-line hover
   const [hoveredLine, setHoveredLine] = useState<string | null>(null);
 
-  // New custom dot renderer for per-line hover
-  const renderCustomDot = (dataKey: string) => (props: any) => {
+  // Update the renderCustomDot function to use name instead of dataKey
+  const renderCustomDot = (name: string) => (props: any) => {
     return (
       <circle 
         cx={props.cx} 
         cy={props.cy} 
-        r={hoveredLine === dataKey ? 6 : 4} 
+        r={hoveredLine === name ? 6 : 4} 
         fill={props.stroke}
-        onMouseEnter={() => setHoveredLine(dataKey)}
+        onMouseEnter={() => setHoveredLine(name)}
         onMouseLeave={() => setHoveredLine(null)}
       />
     );
@@ -176,6 +176,16 @@ export function Analytics() {
       ...prev,
       [entry.dataKey]: !prev[entry.dataKey]
     }));
+  };
+
+  // Add these formatter functions near the top of the Analytics component
+  const formatYAxis = (value: number) => {
+    if (value === 0) return '0';
+    return `${(value / 1000).toFixed(0)}k`;
+  };
+
+  const formatTooltip = (value: number) => {
+    return value.toLocaleString();
   };
 
   const renderSection = () => {
@@ -567,6 +577,7 @@ export function Analytics() {
                           style: { fill: '#9CA3AF' },
                           dy: -20
                           }}
+                          tickFormatter={formatYAxis}
                         />
                         <Tooltip
                           contentStyle={{
@@ -575,10 +586,11 @@ export function Analytics() {
                           borderRadius: '0.5rem',
                           color: '#000000',
                           }}
-                          formatter={(value: number) => [
-                          `${(value / 1000).toFixed(0)}K users`,
-                          'Users'
+                          formatter={(value: number, name: string) => [
+                          `${value.toLocaleString()} users`,
+                          name
                           ]}
+                          itemSorter={(item) => (item.name === hoveredLine ? 1 : -1)}
                         />
                         <Legend
                           layout="vertical"
@@ -752,19 +764,20 @@ export function Analytics() {
                           style: { fill: '#9CA3AF' },
                           dy: -20
                         }}
+                        tickFormatter={formatYAxis}
                       />
                       <Tooltip
                         contentStyle={{
-                          backgroundColor: '#FFFFFF', // changed from '#F7F8FA'
-                          border: '1px solid #D1D5DB', // added light gray border
+                          backgroundColor: '#FFFFFF',
+                          border: '1px solid #D1D5DB',
                           borderRadius: '0.5rem',
-                          color: '#000000', // changed accordingly
-                          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                          color: '#000000',
                         }}
-                        formatter={(value: number) => [
-                          `${(value / 1000).toFixed(0)}K users`,
-                          'Users'
+                        formatter={(value: number, name: string) => [
+                          `${value.toLocaleString()} users`,
+                          name
                         ]}
+                        itemSorter={(item) => (item.name === hoveredLine ? 1 : -1)}
                       />
                       <Legend
                         verticalAlign="bottom"
