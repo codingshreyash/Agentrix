@@ -33,8 +33,12 @@ function SidebarItem({ icon, label, active, onClick }: SidebarItemProps) {
   );
 }
 
-export function Sidebar() {
-  const [activeSection, setActiveSection] = React.useState('engagement');
+interface SidebarProps {
+  activeSection: string;
+  onSectionChange: (section: string) => void;
+}
+
+export function Sidebar({ activeSection, onSectionChange }: SidebarProps) {
   const [searchQuery, setSearchQuery] = React.useState('');
 
   return (
@@ -60,7 +64,7 @@ export function Sidebar() {
           icon={<PinIcon className="w-5 h-5" />}
           label="Pinned Reports"
           active={activeSection === 'pinned'}
-          onClick={() => setActiveSection('pinned')}
+          onClick={() => onSectionChange('pinned')}
         />
         
         <div className="pt-4 pb-2">
@@ -73,35 +77,35 @@ export function Sidebar() {
           icon={<Activity className="w-5 h-5" />}
           label="Engagement & Retention"
           active={activeSection === 'engagement'}
-          onClick={() => setActiveSection('engagement')}
+          onClick={() => onSectionChange('engagement')}
         />
 
         <SidebarItem
           icon={<Users className="w-5 h-5" />}
           label="User Behavior"
           active={activeSection === 'behavior'}
-          onClick={() => setActiveSection('behavior')}
+          onClick={() => onSectionChange('behavior')}
         />
 
         <SidebarItem
           icon={<BarChart2 className="w-5 h-5" />}
           label="Intent Analysis"
           active={activeSection === 'intent'}
-          onClick={() => setActiveSection('intent')}
+          onClick={() => onSectionChange('intent')}
         />
 
         <SidebarItem
           icon={<DollarSign className="w-5 h-5" />}
           label="Revenue Impact"
           active={activeSection === 'revenue'}
-          onClick={() => setActiveSection('revenue')}
+          onClick={() => onSectionChange('revenue')}
         />
 
         <SidebarItem
           icon={<Heart className="w-5 h-5" />}
           label="User Satisfaction"
           active={activeSection === 'satisfaction'}
-          onClick={() => setActiveSection('satisfaction')}
+          onClick={() => onSectionChange('satisfaction')}
         />
 
         <div className="pt-4 pb-2">
@@ -114,7 +118,7 @@ export function Sidebar() {
           icon={<Settings className="w-5 h-5" />}
           label="Preferences"
           active={activeSection === 'settings'}
-          onClick={() => setActiveSection('settings')}
+          onClick={() => onSectionChange('settings')}
         />
       </nav>
 

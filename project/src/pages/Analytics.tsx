@@ -3,13 +3,15 @@ import { Sidebar } from '../components/Sidebar';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { DashboardFilters } from '../components/DashboardFilters';
 import { WordCloud } from '../components/WordCloud';
+import { IntentTrends } from '../components/IntentTrends';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   AreaChart, Area, BarChart, Bar, Cell, PieChart, Pie
 } from 'recharts';
 import {
   TrendingUp, Clock, DollarSign, Users, ArrowUpRight,
-  ArrowDownRight, Activity, Filter, AlertTriangle
+  ArrowDownRight, Activity, Filter, AlertTriangle,
+  Heart, MessageSquare, AlertCircle
 } from 'lucide-react';
 
 const mockData = {
@@ -103,7 +105,31 @@ const mockData = {
     { text: 'Flight Change', value: 55, intent: 'support', trend: 'up', color: '#8B5CF6' },
     { text: 'Baggage Policy', value: 50, intent: 'support', trend: 'stable', color: '#EC4899' },
     { text: 'Loyalty Points', value: 45, intent: 'rewards', trend: 'up', color: '#F59E0B' }
-  ]
+  ],
+  satisfaction: {
+    sentimentOverTime: [
+      { date: '2024-01', positive: 75, neutral: 15, negative: 10 },
+      { date: '2024-02', positive: 70, neutral: 20, negative: 10 },
+      { date: '2024-03', positive: 65, neutral: 20, negative: 15 },
+      { date: '2024-04', positive: 80, neutral: 15, negative: 5 },
+      { date: '2024-05', positive: 85, neutral: 10, negative: 5 },
+      { date: '2024-06', positive: 78, neutral: 12, negative: 10 }
+    ],
+    frustrationPoints: [
+      { issue: 'Complex Booking Flow', count: 450, severity: 'high' },
+      { issue: 'Payment Failures', count: 320, severity: 'high' },
+      { issue: 'Unclear Pricing', count: 280, severity: 'medium' },
+      { issue: 'Slow Response Time', count: 250, severity: 'medium' },
+      { issue: 'Missing Features', count: 180, severity: 'low' }
+    ],
+    escalationsByIntent: [
+      { intent: 'Flight Changes', rate: 25, total: 1200 },
+      { intent: 'Refund Requests', rate: 35, total: 800 },
+      { intent: 'Loyalty Points', rate: 15, total: 2000 },
+      { intent: 'Booking Issues', rate: 30, total: 1500 },
+      { intent: 'Price Match', rate: 20, total: 600 }
+    ]
+  }
 };
 
 export function Analytics() {
@@ -112,6 +138,196 @@ export function Analytics() {
 
   const renderSection = () => {
     switch (activeSection) {
+      case 'satisfaction':
+        return (
+          <>
+            <h2 className="text-xl font-semibold text-white mb-6">User Satisfaction Analysis</h2>
+            
+            {/* Satisfaction KPIs */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+              <div className="bg-gray-800 rounded-lg p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="p-3 bg-green-500/10 rounded-lg">
+                    <Heart className="w-6 h-6 text-green-500" />
+                  </div>
+                  <span className="text-sm text-green-500 flex items-center">
+                    <ArrowUpRight className="w-4 h-4 mr-1" />
+                    +5.2%
+                  </span>
+                </div>
+                <h3 className="text-gray-400 text-sm mb-2">Overall Satisfaction</h3>
+                <p className="text-2xl font-bold text-white">85%</p>
+              </div>
+
+              <div className="bg-gray-800 rounded-lg p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="p-3 bg-orange-500/10 rounded-lg">
+                    <MessageSquare className="w-6 h-6 text-orange-500" />
+                  </div>
+                  <span className="text-sm text-red-500 flex items-center">
+                    <ArrowUpRight className="w-4 h-4 mr-1" />
+                    +2.1%
+                  </span>
+                </div>
+                <h3 className="text-gray-400 text-sm mb-2">Escalation Rate</h3>
+                <p className="text-2xl font-bold text-white">12.5%</p>
+              </div>
+
+              <div className="bg-gray-800 rounded-lg p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="p-3 bg-purple-500/10 rounded-lg">
+                    <Clock className="w-6 h-6 text-purple-500" />
+                  </div>
+                  <span className="text-sm text-green-500 flex items-center">
+                    <ArrowDownRight className="w-4 h-4 mr-1" />
+                    -15%
+                  </span>
+                </div>
+                <h3 className="text-gray-400 text-sm mb-2">Resolution Time</h3>
+                <p className="text-2xl font-bold text-white">2.5m</p>
+              </div>
+
+              <div className="bg-gray-800 rounded-lg p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="p-3 bg-red-500/10 rounded-lg">
+                    <AlertCircle className="w-6 h-6 text-red-500" />
+                  </div>
+                  <span className="text-sm text-red-500 flex items-center">
+                    <ArrowUpRight className="w-4 h-4 mr-1" />
+                    +0.8%
+                  </span>
+                </div>
+                <h3 className="text-gray-400 text-sm mb-2">Churn Risk</h3>
+                <p className="text-2xl font-bold text-white">3.2%</p>
+              </div>
+            </div>
+
+            {/* Sentiment Over Time */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+              <div className="bg-gray-800 rounded-lg p-6">
+                <h3 className="text-lg font-semibold text-white mb-4">Sentiment Trends</h3>
+                <div className="h-80">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={mockData.satisfaction.sentimentOverTime}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                      <XAxis dataKey="date" stroke="#9CA3AF" />
+                      <YAxis stroke="#9CA3AF" />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: '#1F2937',
+                          border: 'none',
+                          borderRadius: '0.5rem',
+                          color: '#F3F4F6',
+                        }}
+                      />
+                      <Area
+                        type="monotone"
+                        dataKey="positive"
+                        stackId="1"
+                        stroke="#10B981"
+                        fill="#10B981"
+                      />
+                      <Area
+                        type="monotone"
+                        dataKey="neutral"
+                        stackId="1"
+                        stroke="#F59E0B"
+                        fill="#F59E0B"
+                      />
+                      <Area
+                        type="monotone"
+                        dataKey="negative"
+                        stackId="1"
+                        stroke="#EF4444"
+                        fill="#EF4444"
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              {/* Escalation Rates */}
+              <div className="bg-gray-800 rounded-lg p-6">
+                <h3 className="text-lg font-semibold text-white mb-4">Escalation Rates by Intent</h3>
+                <div className="h-80">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      data={mockData.satisfaction.escalationsByIntent}
+                      layout="vertical"
+                    >
+                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                      <XAxis type="number" stroke="#9CA3AF" />
+                      <YAxis
+                        dataKey="intent"
+                        type="category"
+                        stroke="#9CA3AF"
+                        width={120}
+                      />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: '#1F2937',
+                          border: 'none',
+                          borderRadius: '0.5rem',
+                          color: '#F3F4F6',
+                        }}
+                      />
+                      <Bar
+                        dataKey="rate"
+                        fill="#8B5CF6"
+                        radius={[0, 4, 4, 0]}
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            </div>
+
+            {/* Frustration Points */}
+            <div className="bg-gray-800 rounded-lg p-6">
+              <div className="flex items-center gap-2 mb-6">
+                <AlertTriangle className="w-5 h-5 text-orange-500" />
+                <h3 className="text-lg font-semibold text-white">Top Frustration Points</h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {mockData.satisfaction.frustrationPoints.map((point, index) => (
+                  <div
+                    key={index}
+                    className={`bg-gray-700 rounded-lg p-4 border ${
+                      point.severity === 'high'
+                        ? 'border-red-500/50'
+                        : point.severity === 'medium'
+                        ? 'border-orange-500/50'
+                        : 'border-yellow-500/50'
+                    }`}
+                  >
+                    <h4 className="text-white font-medium mb-2">{point.issue}</h4>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-400">Occurrences</span>
+                      <span className={`${
+                        point.severity === 'high'
+                          ? 'text-red-400'
+                          : point.severity === 'medium'
+                          ? 'text-orange-400'
+                          : 'text-yellow-400'
+                      }`}>{point.count}</span>
+                    </div>
+                    <div className="flex justify-between text-sm mt-1">
+                      <span className="text-gray-400">Severity</span>
+                      <span className={`${
+                        point.severity === 'high'
+                          ? 'text-red-400'
+                          : point.severity === 'medium'
+                          ? 'text-orange-400'
+                          : 'text-yellow-400'
+                      }`}>{point.severity}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        );
+
       case 'behavior':
         return (
           <>
@@ -291,6 +507,9 @@ export function Analytics() {
               />
             </div>
 
+            {/* Intent Trends */}
+            <IntentTrends showGrowth={true} />
+
             {/* Failed Intents */}
             <div className="bg-gray-800 rounded-lg p-6">
               <div className="flex items-center gap-2 mb-4">
@@ -451,7 +670,7 @@ export function Analytics() {
 
   return (
     <div className="flex h-screen bg-gray-900">
-      <Sidebar />
+      <Sidebar activeSection={activeSection} onSectionChange={setActiveSection} />
       
       <div className="flex-1 overflow-auto">
         {/* Top Bar */}
@@ -463,7 +682,7 @@ export function Analytics() {
             </div>
             <div className="flex items-center gap-4">
               <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 transition-colors">
-                <Filter className="w-4 h-4" />
+                <Filter className="w-4  h-4" />
                 <span className="text-sm font-medium">Add Filter</span>
               </button>
               <button className="px-3 py-1.5 rounded-lg bg-purple-500 text-white hover:bg-purple-600 transition-colors">
