@@ -48,10 +48,10 @@ const mockData = {
     }
   ],
   intentDistribution: [
-    { intent: 'Flight Booking', users: 34350000, color: '#9333EA' },
-    { intent: 'Taxi Booking', users: 22370000, color: '#F97316' },
-    { intent: 'Loyalty Points', users: 15840000, color: '#3B82F6' },
-    { intent: 'Feature Request', users: 13260000, color: '#10B981' }
+    { intent: 'Flight Booking', users: 800000, color: '#9333EA' },
+    { intent: 'Taxi Booking', users: 543000, color: '#F97316' },
+    { intent: 'Check Loyalty Points', users: 104000, color: '#3B82F6' },
+    { intent: 'Private Flights', users: 23000, color: '#10B981' }
   ],
   sentimentData: [
     { time: '00:00', positive: 65, neutral: 25, negative: 10 },
@@ -377,19 +377,21 @@ export function Analytics() {
                       />
                       <Tooltip
                         contentStyle={{
-                          backgroundColor: '#1F2937',
+                          backgroundColor: '#F7F8FA',
                           border: 'none',
                           borderRadius: '0.5rem',
-                          color: '#F3F4F6',
+                          color: '#1F2937', // Changed to a dark gray color for better contrast
+                          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', // Added subtle shadow for better visibility
                         }}
                         formatter={(value: number) => [
-                          `${(value / 1000000).toFixed(2)}M users`,
+                          `${(value / 1000).toFixed(0)}K users`,
                           'Users'
                         ]}
                       />
                       <Bar
                         dataKey="users"
                         radius={[0, 8, 8, 0]}
+                        activeBar={false}
                       >
                         {mockData.intentDistribution.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={entry.color} />
