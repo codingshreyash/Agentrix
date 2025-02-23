@@ -60,8 +60,8 @@ export function Combobox({
     >
       <div className="relative">
         <HeadlessCombobox.Input
-          className="w-full bg-gray-700 text-gray-200 pl-10 pr-10 py-2 rounded-lg text-sm
-            placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+          className="w-full bg-white text-gray-700 pl-10 pr-10 py-2 rounded-lg text-sm
+            placeholder-gray-400 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
           onChange={(event) => setQuery(event.target.value)}
           displayValue={displayValue}
           placeholder={placeholder}
@@ -73,7 +73,8 @@ export function Combobox({
       </div>
 
       <HeadlessCombobox.Options
-        className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-gray-800 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+        className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white py-1
+          shadow-lg ring-1 ring-black ring-opacity-5 border border-gray-300 focus:outline-none"
       >
         {hasGroups ? (
           Object.entries(groupedOptions).map(([group, options]) => (
@@ -111,14 +112,14 @@ function ComboboxOption({ option }: { option: Option }) {
       {({ active, selected }) => (
         <li
           className={`relative cursor-pointer select-none py-2 pl-10 pr-4 text-sm ${
-            active ? 'bg-purple-500/20 text-purple-400' : 'text-gray-200'
+            active ? 'bg-purple-100 text-purple-500' : 'text-gray-700'
           }`}
         >
           <span className={`block truncate ${selected ? 'font-semibold' : 'font-normal'}`}>
             {option.label}
           </span>
           {selected && (
-            <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-purple-400">
+            <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-purple-500">
               <Check className="h-4 w-4" />
             </span>
           )}

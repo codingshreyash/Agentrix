@@ -33,7 +33,7 @@ export function IntentTrends({ showGrowth = true }: IntentTrendsProps) {
   return (
     <div className="rounded-xl p-6 bg-white border border-gray-300">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-lg font-semibold text-gray-900">Intent Trends</h2>
+        <h2 className="text-lg font-semibold text-gray-900">Trends</h2>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setMetric('growth')}
@@ -79,7 +79,12 @@ export function IntentTrends({ showGrowth = true }: IntentTrendsProps) {
             />
             <Tooltip
               cursor={{ fill: 'transparent' }} // prevents white hover background
-              contentStyle={{ backgroundColor: '#ffffff', color: '#000000', border: 'none' }} // white background with dark text
+              contentStyle={{
+                backgroundColor: '#ffffff',
+                color: '#000000',
+                border: '1px solid #D1D5DB', // added light gray border
+                borderRadius: '0.5rem' // rounded corners
+              }}
               formatter={(value: number) => [
                 metric === 'growth' ? `${value}%` : value.toLocaleString(),
                 metric === 'growth' ? 'Growth Rate' : 'Volume'

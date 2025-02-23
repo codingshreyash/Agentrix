@@ -84,7 +84,7 @@ export function Chat() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)] bg-gray-900">
+    <div className="flex flex-col h-[calc(100vh-4rem)] bg-white">
       <div className="border-b border-gray-700 p-4">
         <div className="flex items-center gap-2">
           <Users className="w-5 h-5 text-gray-400" />

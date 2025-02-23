@@ -55,10 +55,10 @@ const mockData = {
     }
   ],
   intentDistribution: [
-    { intent: 'Flight Booking', users: 800000, color: '#9333EA' },
-    { intent: 'Taxi Booking', users: 543000, color: '#F97316' },
-    { intent: 'Check Loyalty Points', users: 104000, color: '#3B82F6' },
-    { intent: 'Private Flights', users: 23000, color: '#10B981' }
+    { intent: 'Book Flights', users: 800000, color: '#9333EA' },
+    { intent: 'Schedule Waymo', users: 543000, color: '#F97316' },
+    { intent: 'Call Uber', users: 104000, color: '#3B82F6' },
+    { intent: 'Boom SuperSonic Flights', users: 23000, color: '#10B981' }
   ],
   sentimentData: [
     { time: '00:00', positive: 65, neutral: 25, negative: 10 },
@@ -87,8 +87,8 @@ const mockData = {
   },
   revenueData: {
     byIntent: [
-      { intent: 'Flight Booking', actual: 25000, potential: 35000 },
-      { intent: 'Taxi Booking', actual: 12000, potential: 28000 },
+      { intent: 'Book Flights', actual: 25000, potential: 35000 },
+      { intent: 'Schedule Waymo', actual: 12000, potential: 28000 },
       { intent: 'Hotel Booking', actual: 18000, potential: 22000 },
       { intent: 'Car Rental', actual: 8000, potential: 15000 }
     ],
@@ -102,7 +102,7 @@ const mockData = {
     ]
   },
   trendingKeywords: [
-    { text: 'Flight Booking', value: 100, intent: 'travel', trend: 'up', color: '#9333EA' },
+    { text: 'Book Flights', value: 100, intent: 'travel', trend: 'up', color: '#9333EA' },
     { text: 'Hotel Bundle', value: 85, intent: 'travel', trend: 'up', color: '#F97316' },
     { text: 'Car Rental', value: 70, intent: 'travel', trend: 'stable', color: '#3B82F6' },
     { text: 'Restaurant', value: 65, intent: 'local', trend: 'up', color: '#10B981' },
@@ -136,24 +136,40 @@ const mockData = {
     ]
   },
   intentDistributionOverTime: [
-    { date: '2024-01', 'Flight Booking': 800000, 'Taxi Booking': 543000, 'Check Loyalty Points': 104000, 'Private Flights': 23000 },
-    { date: '2024-02', 'Flight Booking': 820000, 'Taxi Booking': 553000, 'Check Loyalty Points': 114000, 'Private Flights': 25000 },
-    { date: '2024-03', 'Flight Booking': 790000, 'Taxi Booking': 563000, 'Check Loyalty Points': 124000, 'Private Flights': 28000 },
-    { date: '2024-04', 'Flight Booking': 850000, 'Taxi Booking': 573000, 'Check Loyalty Points': 134000, 'Private Flights': 30000 },
-    { date: '2024-05', 'Flight Booking': 880000, 'Taxi Booking': 583000, 'Check Loyalty Points': 144000, 'Private Flights': 32000 },
-    { date: '2024-06', 'Flight Booking': 900000, 'Taxi Booking': 593000, 'Check Loyalty Points': 154000, 'Private Flights': 35000 },
+    { date: '2024-01', 'Book Flights': 800000, 'Schedule Waymo': 543000, 'Call Uber': 104000, 'Boom SuperSonic Flights': 23000 },
+    { date: '2024-02', 'Book Flights': 820000, 'Schedule Waymo': 553000, 'Call Uber': 114000, 'Boom SuperSonic Flights': 25000 },
+    { date: '2024-03', 'Book Flights': 790000, 'Schedule Waymo': 563000, 'Call Uber': 124000, 'Boom SuperSonic Flights': 28000 },
+    { date: '2024-04', 'Book Flights': 850000, 'Schedule Waymo': 573000, 'Call Uber': 134000, 'Boom SuperSonic Flights': 30000 },
+    { date: '2024-05', 'Book Flights': 880000, 'Schedule Waymo': 583000, 'Call Uber': 144000, 'Boom SuperSonic Flights': 32000 },
+    { date: '2024-06', 'Book Flights': 900000, 'Schedule Waymo': 593000, 'Call Uber': 154000, 'Boom SuperSonic Flights': 35000 },
   ],
 };
 
 export function Analytics() {
   const [activeSection, setActiveSection] = useState('engagement');
   const [visibleLines, setVisibleLines] = useState<Record<string, boolean>>({
-    'Flight Booking': true,
-    'Taxi Booking': true,
-    'Check Loyalty Points': true,
-    'Private Flights': true
+    'Book Flights': true,
+    'Schedule Waymo': true,
+    'Call Uber': true,
+    'Boom SuperSonic Flights': true
   });
   const [hoveredKeyword, setHoveredKeyword] = useState(null);
+  // New state for per-line hover
+  const [hoveredLine, setHoveredLine] = useState<string | null>(null);
+
+  // New custom dot renderer for per-line hover
+  const renderCustomDot = (dataKey: string) => (props: any) => {
+    return (
+      <circle 
+        cx={props.cx} 
+        cy={props.cy} 
+        r={hoveredLine === dataKey ? 6 : 4} 
+        fill={props.stroke}
+        onMouseEnter={() => setHoveredLine(dataKey)}
+        onMouseLeave={() => setHoveredLine(null)}
+      />
+    );
+  };
 
   const handleLegendClick = (entry: any) => {
     setVisibleLines(prev => ({
@@ -240,10 +256,10 @@ export function Analytics() {
                       <YAxis stroke="#9CA3AF" />
                       <Tooltip
                         contentStyle={{
-                          backgroundColor: '#1F2937',
-                          border: 'none',
+                          backgroundColor: '#FFFFFF', // changed from '#1F2937'
+                          border: '1px solid #D1D5DB', // added light gray border
                           borderRadius: '0.5rem',
-                          color: '#F3F4F6',
+                          color: '#000000', // changed from '#F3F4F6'
                         }}
                       />
                       <Area
@@ -291,10 +307,10 @@ export function Analytics() {
                       />
                       <Tooltip
                         contentStyle={{
-                          backgroundColor: '#1F2937',
-                          border: 'none',
+                          backgroundColor: '#FFFFFF', // changed from '#1F2937'
+                          border: '1px solid #D1D5DB', // added light gray border
                           borderRadius: '0.5rem',
-                          color: '#F3F4F6',
+                          color: '#000000', // changed from '#F3F4F6'
                         }}
                       />
                       <Bar
@@ -396,10 +412,10 @@ export function Analytics() {
                       <YAxis stroke="#9CA3AF" />
                       <Tooltip
                         contentStyle={{
-                          backgroundColor: '#1F2937',
-                          border: 'none',
+                          backgroundColor: '#FFFFFF', // changed from '#1F2937'
+                          border: '1px solid #D1D5DB', // added light gray border
                           borderRadius: '0.5rem',
-                          color: '#F3F4F6',
+                          color: '#000000', // changed from '#F3F4F6'
                         }}
                       />
                       <Bar
@@ -423,10 +439,10 @@ export function Analytics() {
                       <YAxis stroke="#9CA3AF" />
                       <Tooltip
                         contentStyle={{
-                          backgroundColor: '#1F2937',
-                          border: 'none',
+                          backgroundColor: '#FFFFFF', // changed from '#1F2937'
+                          border: '1px solid #D1D5DB', // added light gray border
                           borderRadius: '0.5rem',
-                          color: '#F3F4F6',
+                          color: '#000000', // changed from '#F3F4F6'
                         }}
                       />
                       <Line
@@ -460,10 +476,10 @@ export function Analytics() {
                       <YAxis stroke="#9CA3AF" />
                       <Tooltip
                         contentStyle={{
-                          backgroundColor: '#1F2937',
-                          border: 'none',
+                          backgroundColor: '#FFFFFF', // changed from '#1F2937'
+                          border: '1px solid #D1D5DB', // added light gray border
                           borderRadius: '0.5rem',
-                          color: '#F3F4F6',
+                          color: '#000000', // changed from '#F3F4F6'
                         }}
                       />
                       <Bar
@@ -494,10 +510,10 @@ export function Analytics() {
                       <YAxis stroke="#9CA3AF" />
                       <Tooltip
                         contentStyle={{
-                          backgroundColor: '#1F2937',
-                          border: 'none',
+                          backgroundColor: '#FFFFFF', // changed from '#1F2937'
+                          border: '1px solid #D1D5DB', // added light gray border
                           borderRadius: '0.5rem',
-                          color: '#F3F4F6',
+                          color: '#000000', // changed from '#F3F4F6'
                         }}
                       />
                       <Area
@@ -522,46 +538,46 @@ export function Analytics() {
             <div className="mb-8">
               {/* Intent Activity - now takes full width */}
               <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-900 mb-6">Intent Activity</h2>
+                <h2 className="text-lg font-semibold text-gray-900 mb-6">Activity</h2>
                 <div className="flex">
                   <div className="flex-1 h-96">
                     <ResponsiveContainer width="100%" height="100%">
-                      <LineChart 
+                        <LineChart 
                         data={mockData.intentDistributionOverTime}
                         margin={{ left: 60, right: 30, top: 30, bottom: 30 }}
-                      >
+                        >
                         <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                         <XAxis 
                           dataKey="date" 
                           stroke="#9CA3AF"
                           label={{ 
-                            value: 'Date', 
-                            position: 'bottom',
-                            offset: 10,
-                            style: { fill: '#9CA3AF' }
+                          value: 'Date', 
+                          position: 'bottom',
+                          offset: 10,
+                          style: { fill: '#9CA3AF' }
                           }}
                         />
                         <YAxis 
                           stroke="#9CA3AF"
                           label={{ 
-                            value: 'Number of Users', 
-                            angle: -90, 
-                            position: 'left',
-                            offset: 20,
-                            style: { fill: '#9CA3AF' },
-                            dy: -20
+                          value: 'Number of Users', 
+                          angle: -90, 
+                          position: 'left',
+                          offset: 20,
+                          style: { fill: '#9CA3AF' },
+                          dy: -20
                           }}
                         />
                         <Tooltip
                           contentStyle={{
-                            backgroundColor: '#1F2937',
-                            border: 'none',
-                            borderRadius: '0.5rem',
-                            color: '#F3F4F6',
+                          backgroundColor: '#FFFFFF',
+                          border: '1px solid #D1D5DB',
+                          borderRadius: '0.5rem',
+                          color: '#000000',
                           }}
                           formatter={(value: number) => [
-                            `${(value / 1000).toFixed(0)}K users`,
-                            'Users'
+                          `${(value / 1000).toFixed(0)}K users`,
+                          'Users'
                           ]}
                         />
                         <Legend
@@ -569,63 +585,62 @@ export function Analytics() {
                           verticalAlign="middle"
                           align="right"
                           wrapperStyle={{
-                            paddingLeft: '32px',
+                          paddingLeft: '32px',
                           }}
                           onClick={handleLegendClick}
-                          formatter={(value: string, entry: LegendEntry) => (
+                          formatter={(value: string) => {
+                          const active = visibleLines[value];
+                          return (
                             <span style={{ 
-                              color: visibleLines[entry.dataKey as string] ? '#F3F4F6' : '#6B7280',
-                              cursor: 'pointer'
+                            color: active ? '#1F2937' : '#9CA3AF',
+                            cursor: 'pointer'
                             }}>
-                              {value}
+                            {value}
                             </span>
-                          )}
+                          );
+                          }}
                         />
                         <Line
                           type="monotoneX"
-                          dataKey="Flight Booking"
-                          name="Flight Booking"
+                          dataKey="Book Flights"
+                          name="Book Flights"
                           stroke="#9333EA"
                           strokeWidth={2}
-                          dot={false}
-                          activeDot={{ r: 4, fill: '#9333EA' }}
-                          hide={!visibleLines['Flight Booking']}
+                          dot={renderCustomDot('Book Flights')}
+                          hide={!visibleLines['Book Flights']}
                           connectNulls={true}
                         />
                         <Line
                           type="monotoneX"
-                          dataKey="Taxi Booking"
-                          name="Taxi Booking"
+                          dataKey="Schedule Waymo"
+                          name="Schedule Waymo"
                           stroke="#F97316"
                           strokeWidth={2}
-                          dot={false}
-                          activeDot={{ r: 4, fill: '#F97316' }}
-                          hide={!visibleLines['Taxi Booking']}
+                          dot={renderCustomDot('Schedule Waymo')}
+                          hide={!visibleLines['Schedule Waymo']}
                           connectNulls={true} 
                         />
                         <Line
                           type="monotoneX"
-                          dataKey="Check Loyalty Points"
-                          name="Loyalty Points"
+                          dataKey="Call Uber"
+                          name="Call Uber"
                           stroke="#3B82F6"
                           strokeWidth={2}
-                          dot={false}
-                          activeDot={{ r: 4, fill: '#3B82F6' }}
-                          hide={!visibleLines['Check Loyalty Points']}
+                          dot={renderCustomDot('Call Uber')}
+                          hide={!visibleLines['Call Uber']}
                           connectNulls={true}
                         />
                         <Line
                           type="monotoneX"
-                          dataKey="Private Flights"
-                          name="Private Flights"
+                          dataKey="Boom SuperSonic Flights"
+                          name="Boom SuperSonic Flights"
                           stroke="#10B981"
                           strokeWidth={2}
-                          dot={false}
-                          activeDot={{ r: 4, fill: '#10B981' }}
-                          hide={!visibleLines['Private Flights']}
+                          dot={renderCustomDot('Boom SuperSonic Flights')}
+                          hide={!visibleLines['Boom SuperSonic Flights']}
                           connectNulls={true}
                         />
-                      </LineChart>
+                        </LineChart>
                     </ResponsiveContainer>
                   </div>
                 </div>
@@ -740,10 +755,10 @@ export function Analytics() {
                       />
                       <Tooltip
                         contentStyle={{
-                          backgroundColor: '#F7F8FA',
-                          border: 'none',
+                          backgroundColor: '#FFFFFF', // changed from '#F7F8FA'
+                          border: '1px solid #D1D5DB', // added light gray border
                           borderRadius: '0.5rem',
-                          color: '#1F2937',
+                          color: '#000000', // changed accordingly
                           boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
                         }}
                         formatter={(value: number) => [
@@ -762,46 +777,42 @@ export function Analytics() {
                       />
                       <Line
                         type="monotoneX"
-                        dataKey="Flight Booking"
-                        name="Flight Booking"
+                        dataKey="Book Flights"
+                        name="Book Flights"
                         stroke="#9333EA"
                         strokeWidth={2}
-                        dot={false}
-                        activeDot={{ r: 4, fill: '#9333EA' }}
-                        hide={!visibleLines['Flight Booking']}
+                        dot={renderCustomDot('Book Flights')}
+                        hide={!visibleLines['Book Flights']}
                         connectNulls={true}
                       />
                       <Line
                         type="monotoneX"
-                        dataKey="Taxi Booking"
-                        name="Taxi Booking"
+                        dataKey="Schedule Waymo"
+                        name="Schedule Waymo"
                         stroke="#F97316"
                         strokeWidth={2}
-                        dot={false}
-                        activeDot={{ r: 4, fill: '#F97316' }}
-                        hide={!visibleLines['Taxi Booking']}
+                        dot={renderCustomDot('Schedule Waymo')}
+                        hide={!visibleLines['Schedule Waymo']}
                         connectNulls={true}
                       />
                       <Line
                         type="monotoneX"
-                        dataKey="Check Loyalty Points"
+                        dataKey="Call Uber"
                         name="Loyalty Points"
                         stroke="#3B82F6"
                         strokeWidth={2}
-                        dot={false}
-                        activeDot={{ r: 4, fill: '#3B82F6' }}
-                        hide={!visibleLines['Check Loyalty Points']}
+                        dot={renderCustomDot('Call Uber')}
+                        hide={!visibleLines['Call Uber']}
                         connectNulls={true}
                       />
                       <Line
                         type="monotoneX"
-                        dataKey="Private Flights"
-                        name="Private Flights"
+                        dataKey="Boom SuperSonic Flights"
+                        name="Boom SuperSonic Flights"
                         stroke="#10B981"
                         strokeWidth={2}
-                        dot={false}
-                        activeDot={{ r: 4, fill: '#10B981' }}
-                        hide={!visibleLines['Private Flights']}
+                        dot={renderCustomDot('Boom SuperSonic Flights')}
+                        hide={!visibleLines['Boom SuperSonic Flights']}
                         connectNulls={true}
                       />
                     </LineChart>
@@ -819,10 +830,10 @@ export function Analytics() {
                       <YAxis stroke="#9CA3AF" />
                       <Tooltip
                         contentStyle={{
-                          backgroundColor: '#1F2937',
-                          border: 'none',
+                          backgroundColor: '#FFFFFF', // changed from '#1F2937'
+                          border: '1px solid #D1D5DB', // added light gray border
                           borderRadius: '0.5rem',
-                          color: '#F3F4F6',
+                          color: '#000000', // changed from '#F3F4F6'
                         }}
                       />
                       <Area

@@ -9,7 +9,7 @@ import { Setup } from './pages/Setup';
 function App() {
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-gray-900 text-gray-100">
+      <div className="min-h-screen bg-white text-gray-100">
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />

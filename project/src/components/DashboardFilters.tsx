@@ -31,7 +31,7 @@ export function DashboardFilters() {
   const [customDateRange, setCustomDateRange] = React.useState({ start: '', end: '' });
 
   return (
-    <div className="bg-white dark:bg-white border-b border-gray-200">
+    <div className="bg-white border-b border-gray-200">
       <div className="container mx-auto px-4 py-4">
         <div className="flex flex-wrap items-center gap-4">
           {/* Time Range Dropdown */}
@@ -66,7 +66,7 @@ export function DashboardFilters() {
           )}
 
           {/* Demographics Multi-select */}
-          <div className="relative flex-1">
+          <div className="relative w-[250px]">
             <Combobox
               value={selectedDemographics}
               onChange={setSelectedDemographics}
@@ -78,7 +78,7 @@ export function DashboardFilters() {
               }
               multiple
               placeholder="Select demographics"
-              className="min-w-[250px]"
+              className="w-full"
             />
           </div>
 
