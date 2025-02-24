@@ -455,8 +455,26 @@ export function Analytics() {
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={mockData.revenueData.byIntent}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                      <XAxis dataKey="intent" stroke="#9CA3AF" />
-                      <YAxis stroke="#9CA3AF" />
+                      <XAxis 
+                        dataKey="intent" 
+                        stroke="#000000"
+                        label={{ 
+                          value: 'Intent Categories', 
+                          position: 'bottom',
+                          offset: 15,
+                          style: { fill: '#000000', fontWeight: 500 }
+                        }}
+                      />
+                      <YAxis 
+                        stroke="#000000"
+                        label={{ 
+                          value: 'Revenue ($)', 
+                          angle: -90, 
+                          position: 'insideLeft',
+                          offset: -5,
+                          style: { fill: '#000000', fontWeight: 500 }
+                        }}
+                      />
                       <Tooltip
                         contentStyle={{
                           backgroundColor: '#FFFFFF', // changed from '#1F2937'
@@ -490,8 +508,26 @@ export function Analytics() {
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={mockData.revenueData.trending}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                      <XAxis dataKey="month" stroke="#9CA3AF" />
-                      <YAxis stroke="#9CA3AF" />
+                      <XAxis 
+                        dataKey="month" 
+                        stroke="#000000"
+                        label={{ 
+                          value: 'Month', 
+                          position: 'bottom',
+                          offset: 15,
+                          style: { fill: '#000000', fontWeight: 500 }
+                        }}
+                      />
+                      <YAxis 
+                        stroke="#000000"
+                        label={{ 
+                          value: 'Revenue ($)', 
+                          angle: -90, 
+                          position: 'insideLeft',
+                          offset: -5,
+                          style: { fill: '#000000', fontWeight: 500 }
+                        }}
+                      />
                       <Tooltip
                         contentStyle={{
                           backgroundColor: '#FFFFFF', // changed from '#1F2937'
@@ -534,23 +570,22 @@ export function Analytics() {
                         <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                         <XAxis 
                           dataKey="date" 
-                          stroke="#9CA3AF"
+                          stroke="#000000"
                           label={{ 
                             value: 'Date', 
                             position: 'bottom',
-                            offset: 10,
-                            style: { fill: '#9CA3AF' }
+                            offset: 15,
+                            style: { fill: '#000000', fontWeight: 500 }
                           }}
                         />
                         <YAxis 
-                          stroke="#9CA3AF"
+                          stroke="#000000"
                           label={{ 
                             value: 'Number of Users', 
                             angle: -90, 
-                            position: 'left',
-                            offset: 20,
-                            style: { fill: '#9CA3AF' },
-                            dy: -20
+                            position: 'insideLeft',
+                            offset: -5,
+                            style: { fill: '#000000', fontWeight: 500 }
                           }}
                           tickFormatter={formatYAxis}
                         />
@@ -566,23 +601,39 @@ export function Analytics() {
                             paddingLeft: '32px',
                           }}
                           onClick={handleLegendClick}
-                          formatter={(value: string) => {
-                            const active = visibleLines[value];
+                          content={(props) => {
+                            const { payload } = props;
+                            if (!payload) return null;
+
                             return (
-                              <span className="flex items-center gap-2" style={{ 
-                                color: active ? '#1F2937' : '#9CA3AF',
-                                cursor: 'pointer'
-                              }}>
-                                {value}
-                                {intentCategories[value] === 'unsupported' && (
-                                  <div className="relative group">
-                                    <AlertTriangle className="w-4 h-4 text-red-500 cursor-help" />
-                                    <div className="absolute z-10 invisible group-hover:visible bg-gray-900 text-white text-sm rounded-lg py-1 px-2 -right-4 -top-8 whitespace-nowrap">
-                                      Your agent does not support this feature
+                              <div className="flex flex-col gap-2">
+                                {payload.map((entry: any, index: number) => {
+                                  const isUnsupported = intentCategories[entry.value as keyof typeof intentCategories] === 'unsupported';
+                                  const active = visibleLines[entry.value];
+                                  
+                                  return (
+                                    <div 
+                                      key={`legend-${index}`} 
+                                      className={`flex items-center gap-2 cursor-pointer ${active ? 'text-gray-900' : 'text-gray-400'}`}
+                                      onClick={() => handleLegendClick(entry)}
+                                    >
+                                      <div 
+                                        className={`w-2 h-2 rounded-full`}
+                                        style={{ backgroundColor: active ? entry.color : '#9CA3AF' }}
+                                      />
+                                      <span>{entry.value}</span>
+                                      {isUnsupported && (
+                                        <div className="relative group">
+                                          <AlertTriangle className="w-4 h-4 text-red-500 cursor-help" />
+                                          <div className="absolute z-10 invisible group-hover:visible bg-gray-900 text-white text-sm rounded-lg py-1 px-2 -right-4 -top-8 whitespace-nowrap">
+                                            Your agent does not support this feature
+                                          </div>
+                                        </div>
+                                      )}
                                     </div>
-                                  </div>
-                                )}
-                              </span>
+                                  );
+                                })}
+                              </div>
                             );
                           }}
                         />
@@ -742,23 +793,22 @@ export function Analytics() {
                       <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                       <XAxis 
                         dataKey="date" 
-                        stroke="#9CA3AF"
+                        stroke="#000000"
                         label={{ 
                           value: 'Date', 
                           position: 'bottom',
-                          offset: 10,
-                          style: { fill: '#9CA3AF' }
+                          offset: 15,
+                          style: { fill: '#000000', fontWeight: 500 }
                         }}
                       />
                       <YAxis 
-                        stroke="#9CA3AF"
+                        stroke="#000000"
                         label={{ 
                           value: 'Number of Users', 
                           angle: -90, 
-                          position: 'left',
-                          offset: 20,
-                          style: { fill: '#9CA3AF' },
-                          dy: -20
+                          position: 'insideLeft',
+                          offset: -5,
+                          style: { fill: '#000000', fontWeight: 500 }
                         }}
                         tickFormatter={formatYAxis}
                       />
@@ -836,8 +886,26 @@ export function Analytics() {
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={mockData.sentimentData}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                      <XAxis dataKey="time" stroke="#9CA3AF" />
-                      <YAxis stroke="#9CA3AF" />
+                      <XAxis 
+                        dataKey="time" 
+                        stroke="#000000"
+                        label={{ 
+                          value: 'Time Period', 
+                          position: 'bottom',
+                          offset: 15,
+                          style: { fill: '#000000', fontWeight: 500 }
+                        }}
+                      />
+                      <YAxis 
+                        stroke="#000000"
+                        label={{ 
+                          value: 'User Count', 
+                          angle: -90, 
+                          position: 'insideLeft',
+                          offset: -5,
+                          style: { fill: '#000000', fontWeight: 500 }
+                        }}
+                      />
                       <Tooltip
                         contentStyle={{
                           backgroundColor: '#FFFFFF', // changed from '#1F2937'

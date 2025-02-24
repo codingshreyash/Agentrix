@@ -69,7 +69,7 @@ export function Sidebar({ activeSection, onSectionChange }: SidebarProps) {
         
         <div className="pt-4 pb-2">
           <div className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">
-            Analytics
+            Views
           </div>
         </div>
 
